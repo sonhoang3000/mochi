@@ -5,6 +5,8 @@ import { loginUser } from '@/services/userService'
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { setAuthUser } from '@/redux/authSlice';
 
 const Login = () => {
 	const [input, setInput] = useState({
@@ -13,19 +15,20 @@ const Login = () => {
 	})
 	const [loading, setLoading] = useState(false)
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
 	const changeEventHandler = (e) => {
 		setInput({ ...input, [e.target.name]: e.target.value })
 	}
 
 	const loginHandler = async (e) => {
 		e.preventDefault()
-		let res = ""
 		try {
 			setLoading(true)
-			res = await loginUser(input, {
+			const res = await loginUser(input, {
 				withCredentials: true
 			})
 			if (res.success) {
+				dispatch(setAuthUser(res.user))
 				navigate("/")
 				toast.success(res.message)
 				setInput({
@@ -35,7 +38,7 @@ const Login = () => {
 			}
 		} catch (error) {
 			console.log('error', error)
-			toast.error("Error register", res.message)
+			toast.error("Error register", error.response.data.message)
 		} finally {
 			setLoading(false)
 		}
