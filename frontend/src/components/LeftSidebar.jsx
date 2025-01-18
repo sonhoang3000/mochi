@@ -5,17 +5,23 @@ import { logoutUser } from '@/services/userService'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setAuthUser } from '@/redux/authSlice'
+import { useState } from 'react'
+import CreatePost from './CreatePost'
+import { setPosts, setSelectedPost } from '@/redux/postSlice'
 
 const LeftSidebar = () => {
 	const nagivate = useNavigate()
 	const { user } = useSelector(store => store.auth)
 	const dispatch = useDispatch()
+	const [open, setOpen] = useState(false)
 
 	const logoutHandler = async () => {
 		try {
 			const res = await logoutUser()
 			if (res.success) {
 				dispatch(setAuthUser(null))
+				dispatch(setSelectedPost(null))
+				dispatch(setPosts([]))
 				nagivate("/login")
 				toast.success(res.message)
 			}
@@ -25,7 +31,11 @@ const LeftSidebar = () => {
 	}
 
 	const sidebarHandler = (textType) => {
-		if (textType === "Logout") logoutHandler();
+		if (textType === "Logout") {
+			logoutHandler();
+		} else if (textType === "Create") {
+			setOpen(true)
+		}
 	}
 
 	const sidebarItems = [
@@ -66,6 +76,11 @@ const LeftSidebar = () => {
 					}
 				</div>
 			</div>
+
+			<CreatePost
+				open={open} setOpen={setOpen}
+			/>
+
 		</div>
 	)
 }

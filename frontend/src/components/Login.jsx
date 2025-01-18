@@ -24,9 +24,7 @@ const Login = () => {
 		e.preventDefault()
 		try {
 			setLoading(true)
-			const res = await loginUser(input, {
-				withCredentials: true
-			})
+			const res = await loginUser(input)
 			if (res.success) {
 				dispatch(setAuthUser(res.user))
 				navigate("/")

@@ -3,11 +3,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "./ui/button"
-import { useState } from "react"
-
-
+import { useEffect, useState } from "react"
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from "react-redux"
+import Comment from "./Comment"
+import { addComment } from "@/services/postService"
+import { setPosts } from "@/redux/postSlice"
+import { toast } from "sonner"
 const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
+	const { selectedPost, posts } = useSelector(store => store.post);
+	const [comment, setComment] = useState([])
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		if (selectedPost) {
+			setComment(selectedPost.comments)
+		}
+	}, [selectedPost])
 
 	const changeEventHandler = (a) => {
 		const inputText = a.target.value
@@ -19,7 +32,21 @@ const CommentDialog = ({ open, setOpen }) => {
 	}
 
 	const sendMessageHandler = async () => {
-		alert(text)
+		try {
+			const res = await addComment(selectedPost._id, { text })
+			if (res.success) {
+				const updatedCommentData = [...comment, res.comment];
+				setComment(updatedCommentData);
+				const updatedPostData = posts.map(p =>
+					p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
+				);
+				dispatch(setPosts(updatedPostData));
+				toast.success(res.message);
+				setText("");
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -28,7 +55,7 @@ const CommentDialog = ({ open, setOpen }) => {
 				<div className="flex flex-1">
 					<div className="w-1/2">
 						<img
-							src="https://techcrunch.com/wp-content/uploads/2023/03/alexander-shatov-71Qk8ODIBko-unsplash.jpg"
+							src={selectedPost?.image}
 							alt="post_img"
 							className="w-full h-full object-cover rounded-l-lg"
 						/>
@@ -38,12 +65,12 @@ const CommentDialog = ({ open, setOpen }) => {
 							<div className="flex gap-3 items-center ">
 								<Link>
 									<Avatar>
-										<AvatarImage />
+										<AvatarImage src={selectedPost?.author?.profilePicture} />
 										<AvatarFallback>CN</AvatarFallback>
 									</Avatar>
 								</Link>
 								<div>
-									<Link className="font-semibold text-xs" >username</Link>
+									<Link className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
 									{/* <span className="text-gray-600 text-sm">Bio here ...</span> */}
 								</div>
 							</div>
@@ -64,11 +91,13 @@ const CommentDialog = ({ open, setOpen }) => {
 						</div>
 						<hr />
 						<div className="flex-1 overflow-y-auto max-h-96 p-4">
-							comments anyone
+							{
+								comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+							}
 						</div>
 						<div className="p-4">
 							<div className="flex items-center gap-2">
-								<input type="text" value={text} onChange={changeEventHandler} placeholder="Add a comment ..." className="w-full outline-none border border-gray-300 p-2 rounded" />
+								<input type="text" value={text} onChange={changeEventHandler} placeholder="Add a comment ..." className="w-full outline-none border text-sm border-gray-300 p-2 rounded" />
 								<Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
 							</div>
 						</div>
@@ -78,5 +107,11 @@ const CommentDialog = ({ open, setOpen }) => {
 		</Dialog>
 	)
 }
+
+// Định nghĩa PropTypes
+CommentDialog.propTypes = {
+	open: PropTypes.bool.isRequired, // 'open' là boolean và bắt buộc
+	setOpen: PropTypes.func.isRequired, // 'setOpen' là một hàm và bắt buộc
+};
 
 export default CommentDialog
