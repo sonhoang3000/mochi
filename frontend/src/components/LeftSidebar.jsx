@@ -35,6 +35,10 @@ const LeftSidebar = () => {
 			logoutHandler();
 		} else if (textType === "Create") {
 			setOpen(true)
+		} else if (textType === "Profile") {
+			nagivate(`/profile/${user?._id}`)
+		} else if (textType === "Home") {
+			nagivate(`/`)
 		}
 	}
 

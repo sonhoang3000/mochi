@@ -28,6 +28,18 @@ const logoutUser = () => {
 	return axios.get("/api/v1/user/logout", { withCredentials: true })
 }
 
+const getSuggestedUsers = () => {
+	return axios.get("/api/v1/user/suggested", { withCredentials: true })
+}
+
+const getProfile = (userId) => {
+	return axios.get(`/api/v1/user/${userId}/profile`, { withCredentials: true })
+}
+
+const editProfile = (formData) => {
+	return axios.post(`/api/v1/user/profile/edit`, formData, { withCredentials: true })
+}
+
 export {
-	registerUser, loginUser, logoutUser
+	registerUser, loginUser, logoutUser, getSuggestedUsers, getProfile, editProfile
 }

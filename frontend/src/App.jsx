@@ -4,6 +4,7 @@ import MainLayout from './components/MainLayout'
 import Signup from './components/Signup'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Profile from './components/Profile'
+import EditProfile from './components/EditProfile'
 
 
 const browserRouter = createBrowserRouter([
@@ -16,8 +17,12 @@ const browserRouter = createBrowserRouter([
 				element: <Home />
 			},
 			{
-				path: "/profile",
+				path: "/profile/:id",
 				element: <Profile />
+			},
+			{
+				path: "/account/edit",
+				element: <EditProfile />
 			},
 		]
 	},
