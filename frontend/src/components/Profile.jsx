@@ -22,7 +22,7 @@ const Profile = () => {
 		setActiveTab(tab)
 	}
 
-	const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmark
+	const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
 
 	return (
 		<div className="flex max-w-5xl justify-center mx-auto pl-10">

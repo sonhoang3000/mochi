@@ -6,9 +6,12 @@ import mongoose from "mongoose"
 import userRoute from "./routes/user.route.js"
 import postRoute from "./routes/post.route.js"
 import messageRoute from "./routes/message.route.js";
+import { app, server } from "./socket/socket.js"
 
 dotenv.config({})
-const app = express()
+
+
+const PORT = process.env.PORT || 3000
 
 app.get("/", (req, res) => {
       return res.status(200).json({
@@ -26,11 +29,11 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
+
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/post", postRoute)
 app.use("/api/v1/message", messageRoute)
 
-const PORT = process.env.PORT || 1234
 
 const connnectDB = async () => {
       try {
@@ -41,7 +44,7 @@ const connnectDB = async () => {
       }
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
       connnectDB()
       console.log(`Server is running at port ${PORT}`)
 })

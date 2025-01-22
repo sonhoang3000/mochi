@@ -90,8 +90,6 @@ const Signup = () => {
 						<Button type="submit">Sign up</Button>
 					)
 				}
-
-				<Button type="submit">Sign up</Button>
 				<span className='text-center'>
 					Already have an account?
 					<Link to="/login" className='text-blue-600'>Login</Link>
