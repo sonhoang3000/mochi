@@ -97,7 +97,13 @@ const CommentDialog = ({ open, setOpen }) => {
 						</div>
 						<div className="p-4">
 							<div className="flex items-center gap-2">
-								<input type="text" value={text} onChange={changeEventHandler} placeholder="Add a comment ..." className="w-full outline-none border text-sm border-gray-300 p-2 rounded" />
+								<input type="text" value={text} onChange={changeEventHandler} placeholder="Add a comment ..." className="w-full outline-none border text-sm border-gray-300 p-2 rounded"
+									onKeyDown={(e) => {
+										if (e.key === 'Enter') {
+											sendMessageHandler();
+										}
+									}}
+								/>
 								<Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
 							</div>
 						</div>

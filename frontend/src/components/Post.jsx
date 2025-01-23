@@ -168,6 +168,11 @@ const Post = ({ post }) => {
 					className="outline-none text-sm w-full"
 					value={text}
 					onChange={changeEventHandler}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							commentHandler();
+						}
+					}}
 				/>
 				{
 					text && <span onClick={commentHandler} className="text-[#3BADF8] cursor-pointer">Post</span>

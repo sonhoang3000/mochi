@@ -11,7 +11,7 @@ dotenv.config({})
 
 const io = new Server(server, {
 	cors: {
-		origin: process.env.REACT_HOST,
+		origin: process.env.URL,
 		methods: ['GET', 'POST']
 	}
 })

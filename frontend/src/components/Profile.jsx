@@ -43,7 +43,6 @@ const Profile = () => {
 										<>
 											<Link to="/account/edit" ><Button variant="secondary" className="hover:bg-gray-200 h-8">Edit profile</Button></Link>
 											<Button variant="secondary" className="hover:bg-gray-200 h-8">View archive</Button>
-											<Button variant="secondary" className="hover:bg-gray-200 h-8">Ad tools</Button>
 										</>
 									) : (
 										isFollowing ? (
@@ -65,9 +64,6 @@ const Profile = () => {
 							<div className="flex flex-col gap-1">
 								<span className="font-semibold" >{userProfile?.bio || 'bio here...'}</span>
 								<Badge className="w-fit" variant="secondary"> <AtSign /> <span className="pl-1" >{userProfile?.username}</span></Badge>
-								<span>Thực tập tốt nghiệp mochi</span>
-								<span>🤯Thực tập tốt nghiệp mochi</span>
-								<span>Mochi app hân hạnh phục vụ các bạn </span>
 							</div>
 						</div>
 					</section>
