@@ -8,11 +8,10 @@ const app = express()
 const server = http.createServer(app)
 
 dotenv.config({})
-const REACT_HOST = process.env.REACT_HOST
 
 const io = new Server(server, {
 	cors: {
-		origin: REACT_HOST,
+		origin: process.env.REACT_HOST,
 		methods: ['GET', 'POST']
 	}
 })
