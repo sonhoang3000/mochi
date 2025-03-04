@@ -71,7 +71,7 @@ const LeftSidebar = () => {
 		{ icon: <AlignJustify />, text: "More" },
 	]
 	if (location.pathname.startsWith("/admin")) {
-		return null;
+		return null
 	}
 	return (
 		<div className='fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen'>
@@ -129,3 +129,4 @@ const LeftSidebar = () => {
 }
 
 export default LeftSidebar
+

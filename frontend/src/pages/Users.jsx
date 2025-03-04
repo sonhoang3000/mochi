@@ -26,7 +26,7 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    handleSearch(); 
+    handleSearch();
   }, [search, status]);
 
   return (
@@ -35,14 +35,14 @@ const UserManagement = () => {
 
       <div className="p-6 w-full">
         <h2 className="text-2xl font-bold mb-4">User Management</h2>
-        
+
         <div className="mb-4">
           <input
             type="text"
             placeholder="Tìm kiếm theo tên, email, hoặc ID..."
             className="p-2 border border-gray-300 rounded mr-2"
             value={search}
-            onChange={(e) => setSearch(e.target.value)} 
+            onChange={(e) => setSearch(e.target.value)}
           />
           <button
             onClick={handleSearch}

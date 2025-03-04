@@ -6,16 +6,16 @@ import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 
 const router = express.Router();
-const SECRET_KEY = "your_secret_key"; 
+const SECRET_KEY = "your_secret_key";
 
 router.post("/admin/login", async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const admin = await User.findOne({ username, role: "admin" }); 
+        const admin = await User.findOne({ username, role: "admin" });
         if (!admin) return res.status(404).json({ error: "Admin không tồn tại" });
 
-        const isMatch = await bcrypt.compare(password, admin.password);  
+        const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) return res.status(400).json({ error: "Mật khẩu không đúng" });
 
         const token = jwt.sign({ id: admin._id, username: admin.username }, SECRET_KEY, { expiresIn: "1h" });
@@ -28,13 +28,13 @@ router.post("/admin/login", async (req, res) => {
 
 // Middleware để xác thực admin
 const authenticateAdmin = (req, res, next) => {
-    const token = req.header("Authorization")?.replace("Bearer ", ""); 
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) return res.status(401).json({ error: "Không có quyền truy cập" });
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY);  
-        req.admin = decoded;  
+        const decoded = jwt.verify(token, SECRET_KEY);
+        req.admin = decoded;
         next();
     } catch (err) {
         res.status(401).json({ error: "Token không hợp lệ" });
@@ -43,7 +43,7 @@ const authenticateAdmin = (req, res, next) => {
 
 router.get("/admin/profile", authenticateAdmin, async (req, res) => {
     try {
-        const admin = await User.findById(req.admin.id).select("-password");  
+        const admin = await User.findById(req.admin.id).select("-password");
         res.json(admin);
     } catch (err) {
         console.error("Error fetching admin profile:", err);
@@ -102,15 +102,15 @@ router.delete("/users/:id", async (req, res) => {
 // Lấy danh sách bài viết với tìm kiếm
 router.get("/posts", async (req, res) => {
     try {
-        const { search = "" } = req.query;  
+        const { search = "" } = req.query;
 
         let query = {};
 
         if (search.trim()) {
             query.$or = [
-                { title: { $regex: search, $options: "i" } },    
-                { content: { $regex: search, $options: "i" } },  
-                { caption: { $regex: search, $options: "i" } } 
+                { title: { $regex: search, $options: "i" } },
+                { content: { $regex: search, $options: "i" } },
+                { caption: { $regex: search, $options: "i" } }
             ];
         }
 
@@ -147,8 +147,5 @@ router.get("/dashboard", async (req, res) => {
         res.status(500).json({ error: "Lỗi server" });
     }
 });
-
-
-
 
 export default router;

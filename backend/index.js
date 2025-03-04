@@ -1,18 +1,18 @@
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import dotenv from "dotenv";
-import express, { urlencoded } from "express";
-import mongoose from "mongoose";
-import path from "path";
+import express, { urlencoded } from "express"
+import cors from "cors"
+import cookieParser from "cookie-parser"
+import dotenv from "dotenv"
+import mongoose from "mongoose"
 import { User } from "./models/user.model.js";
-import adminRoute from "./routes/admin.js";
+import userRoute from "./routes/user.route.js"
+import postRoute from "./routes/post.route.js"
 import messageRoute from "./routes/message.route.js";
 import postRoute from "./routes/post.route.js";
 import userRoute from "./routes/user.route.js";
-import { app, io, server } from "./socket/socket.js";
 import storyRoute from "./routes/story.route.js"
-import { app, server } from "./socket/socket.js"
-import path from "path"
+import adminRoute from "./routes/admin.js";
+import { app, io, server } from "./socket/socket.js";
+// import path from "path"
 
 dotenv.config();
 
@@ -20,21 +20,18 @@ const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
 // Middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(urlencoded({ extended: true }));
 
+// const __dirname = path.resolve()
+
+
+app.use(express.json())
+app.use(cookieParser())
+app.use(urlencoded({ extended: true }))
 const corsOptions = {
     origin: process.env.URL,
     credentials: true
 };
 app.use(cors(corsOptions));
-
-// Routes
-app.use("/api/v1/user", userRoute);
-app.use("/api/v1/post", postRoute);
-app.use("/api/v1/message", messageRoute);
-app.use("/admin", adminRoute);
 
 // Kết nối MongoDB
 const connectDB = async () => {
@@ -50,15 +47,18 @@ app.use("/api/v1/user", userRoute)
 app.use("/api/v1/post", postRoute)
 app.use("/api/v1/message", messageRoute)
 app.use("/api/v1/story", storyRoute)
-
-const onlineUsers = new Map();
+app.use("/admin", adminRoute);
 
 // app.use(express.static(path.join(__dirname, "/frontend/dist")))
 // app.get("*", (req, res) => {
 //       res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
 // })
+
+const onlineUsers = new Map();
+
 io.on("connection", async (socket) => {
     console.log(` User connected: ${socket.id}`);
+
     socket.on("user-online", async (userId) => {
         onlineUsers.set(userId, socket.id);
         await User.findByIdAndUpdate(userId, { online: true });
@@ -81,7 +81,8 @@ io.on("connection", async (socket) => {
     });
 });
 
-server.listen(PORT, async () => {
-    await connectDB();
-    console.log(` Server is running on port ${PORT}`);
-});
+
+server.listen(PORT, () => {
+    connectDB()
+    console.log(`Server is running at port ${PORT}`)
+})

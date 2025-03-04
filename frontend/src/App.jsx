@@ -21,6 +21,7 @@ import ProtectedRoutes from './components/ProtectedRoutes'
 import SearchUsers from './components/SearchUsers'
 import Explore from './components/Explore'
 import SuggestedUsers from './components/SuggestedUsers'
+
 const browserRouter = createBrowserRouter([
 	{
 		path: "/",

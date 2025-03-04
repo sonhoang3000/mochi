@@ -12,9 +12,9 @@ const Dashboard = () => {
   const [onlineUsers, setOnlineUsers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  const [pieData, setPieData] = useState({});  
-  const [barData, setBarData] = useState({});  
+
+  const [pieData, setPieData] = useState({});
+  const [barData, setBarData] = useState({});
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -39,10 +39,10 @@ const Dashboard = () => {
           datasets: [{
             label: 'Số lượng',
             data: [response.data.totalUsers, response.data.totalPosts, response.data.onlineUsers],
-            backgroundColor: '#4CAF50', 
+            backgroundColor: '#4CAF50',
           }]
         });
-        
+
       } catch (error) {
         setError(`Có lỗi xảy ra: ${error.message}`);
         console.error('Error fetching dashboard data:', error);
@@ -70,7 +70,7 @@ const Dashboard = () => {
             <div className="mb-6">
               <h3 className="text-xl mb-4">Biểu đồ tròn</h3>
               <Pie data={pieData} />
-              
+
             </div>
 
             <div className="mb-6">
