@@ -1,7 +1,7 @@
 import { setAuthUser } from '@/redux/authSlice'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { logoutUser } from '@/services/userService'
-import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp } from 'lucide-react'
+import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, AlignJustify } from 'lucide-react'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'

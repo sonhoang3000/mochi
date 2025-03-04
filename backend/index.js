@@ -7,8 +7,6 @@ import { User } from "./models/user.model.js";
 import userRoute from "./routes/user.route.js"
 import postRoute from "./routes/post.route.js"
 import messageRoute from "./routes/message.route.js";
-import postRoute from "./routes/post.route.js";
-import userRoute from "./routes/user.route.js";
 import storyRoute from "./routes/story.route.js"
 import adminRoute from "./routes/admin.js";
 import { app, io, server } from "./socket/socket.js";
@@ -17,7 +15,7 @@ import { app, io, server } from "./socket/socket.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 
 // Middleware
 
