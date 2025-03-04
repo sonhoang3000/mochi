@@ -8,25 +8,36 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 export const addNewPost = async (req, res) => {
 	try {
 		const { caption } = req.body;
-		const image = req.file;
+		const file = req.file;
 		const authorId = req.id;
 
-		if (!image) return res.status(400).json({ message: 'Image required' });
+		if (!file) return res.status(400).json({ message: 'file required' });
 
-		// image upload 
-		const optimizedImageBuffer = await sharp(image.buffer)
-			.resize({ width: 800, height: 800, fit: 'inside' })
-			.toFormat('jpeg', { quality: 80 })
-			.toBuffer();
+		let typeContent;
+
+		if (file.mimetype.startsWith("image/")) {
+			typeContent = "image";
+		} else if (file.mimetype.startsWith("video/")) {
+			typeContent = "video";
+		} else {
+			return res.status(400).json({ message: "Invalid file type" });
+		}
 
 		// buffer to data uri
-		const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
-		const cloudResponse = await cloudinary.uploader.upload(fileUri);
+		const fileUri = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+
+		const cloudResponse = await cloudinary.uploader.upload(fileUri, {
+			resource_type: "auto",
+		});
+
 		const post = await Post.create({
 			caption,
-			image: cloudResponse.secure_url,
+			src: cloudResponse.secure_url,
+			typeContent,
 			author: authorId
 		});
+
 		const user = await User.findById(authorId);
 		if (user) {
 			user.posts.push(post._id);
@@ -89,24 +100,24 @@ export const getUserPost = async (req, res) => {
 }
 export const likePost = async (req, res) => {
 	try {
-		const likeKrneWalaUserKiId = req.id;
+		const currentID = req.id;
 		const postId = req.params.id;
 		const post = await Post.findById(postId);
 		if (!post) return res.status(404).json({ message: 'Post not found', success: false });
 
 		// like logic started
-		await post.updateOne({ $addToSet: { likes: likeKrneWalaUserKiId } });
+		await post.updateOne({ $addToSet: { likes: currentID } });
 		await post.save();
 
 		// implement socket io for real time notification
-		const user = await User.findById(likeKrneWalaUserKiId).select('username profilePicture');
+		const user = await User.findById(currentID).select('username profilePicture');
 
 		const postOwnerId = post.author.toString();
-		if (postOwnerId !== likeKrneWalaUserKiId) {
+		if (postOwnerId !== currentID) {
 			// emit a notification event
 			const notification = {
 				type: 'like',
-				userId: likeKrneWalaUserKiId,
+				userId: currentID,
 				userDetails: user,
 				postId,
 				message: 'Your post was liked'
@@ -122,23 +133,23 @@ export const likePost = async (req, res) => {
 }
 export const dislikePost = async (req, res) => {
 	try {
-		const likeKrneWalaUserKiId = req.id;
+		const currentID = req.id;
 		const postId = req.params.id;
 		const post = await Post.findById(postId);
 		if (!post) return res.status(404).json({ message: 'Post not found', success: false });
 
 		// like logic started
-		await post.updateOne({ $pull: { likes: likeKrneWalaUserKiId } });
+		await post.updateOne({ $pull: { likes: currentID } });
 		await post.save();
 
 		// implement socket io for real time notification
-		const user = await User.findById(likeKrneWalaUserKiId).select('username profilePicture');
+		const user = await User.findById(currentID).select('username profilePicture');
 		const postOwnerId = post.author.toString();
-		if (postOwnerId !== likeKrneWalaUserKiId) {
+		if (postOwnerId !== currentID) {
 			// emit a notification event
 			const notification = {
 				type: 'dislike',
-				userId: likeKrneWalaUserKiId,
+				userId: currentID,
 				userDetails: user,
 				postId,
 				message: 'Your post was disliked'
@@ -146,8 +157,6 @@ export const dislikePost = async (req, res) => {
 			const postOwnerSocketId = getReceiverSocketId(postOwnerId);
 			io.to(postOwnerSocketId).emit('notification', notification);
 		}
-
-
 		return res.status(200).json({ message: 'Post disliked', success: true });
 	} catch (error) {
 
@@ -157,9 +166,7 @@ export const addComment = async (req, res) => {
 	try {
 		const postId = req.params.id;
 		const commentKrneWalaUserKiId = req.id;
-
 		const { text } = req.body;
-
 		const post = await Post.findById(postId);
 
 		if (!text) return res.status(400).json({ message: 'text is required', success: false });

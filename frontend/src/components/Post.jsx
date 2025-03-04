@@ -20,6 +20,7 @@ const Post = ({ post }) => {
 	const [postLike, setPostLike] = useState(post.likes.length);
 	const [comment, setComment] = useState(post.comments)
 	const dispatch = useDispatch()
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const changeEventHandler = (e) => {
 		const inputText = e.target.value
@@ -34,8 +35,8 @@ const Post = ({ post }) => {
 		try {
 			const action = liked ? "dislike" : 'like'
 			const res = await likeOrDislike(post?._id, action)
-			//console.log(res)
 			if (res.success) {
+				// like hay dislike
 				const updatedLiked = liked ? postLike - 1 : postLike + 1
 				setPostLike(updatedLiked)
 				setLiked(!liked)
@@ -56,6 +57,8 @@ const Post = ({ post }) => {
 	}
 
 	const commentHandler = async () => {
+		if (isSubmitting) return; // Tránh gọi hàm nếu đã có yêu cầu đang xử lý
+		setIsSubmitting(true);
 		try {
 			const res = await addComment(post._id, { text })
 			if (res.success) {
@@ -70,6 +73,8 @@ const Post = ({ post }) => {
 			}
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsSubmitting(false); // Mở khóa sau khi hoàn tất
 		}
 	}
 
@@ -122,16 +127,28 @@ const Post = ({ post }) => {
 
 						<Button variant="ghost" className="cursor-pointer w-fit" >Add to favorites</Button>
 						{
-							user && user?._id === post?.author?._id && <Button onClick={deletePostHandler} variant="ghost" className="cursor-pointer w-fit" >Delete</Button>
+							user && user?._id === post?.author?._id && <Button onClick={deletePostHandler} variant="ghost" className="cursor-pointer w-fit text-[#ED4956] " >Delete</Button>
 						}
 					</DialogContent>
 				</Dialog>
 			</div>
-			<img
-				className="rounded-sm my-2 w-full aspect-square object-cover"
-				src={post.image}
-				alt="post_img"
-			/>
+
+			{post?.typeContent === "image" ? (
+				<img
+					className="rounded-sm my-2 w-full aspect-square object-contain"
+					src={post?.src}
+					alt="post_img"
+					onDoubleClick={likeOrDislikeHandler}
+				/>
+			) : post?.typeContent === "video" ? (
+				<video
+					className="rounded-sm my-2 w-full aspect-square object-contain"
+					controls
+				>
+					<source src={post?.src} type="video/mp4" />
+					Your browser does not support the video tag.
+				</video>
+			) : null}
 
 			<div className="flex items-center justify-between my-2">
 				<div className="flex items-center gap-3">
@@ -170,6 +187,7 @@ const Post = ({ post }) => {
 					onChange={changeEventHandler}
 					onKeyDown={(e) => {
 						if (e.key === 'Enter') {
+							e.preventDefault(); // Ngăn sự kiện mặc định
 							commentHandler();
 						}
 					}}
@@ -192,10 +210,12 @@ Post.propTypes = {
 			_id: PropTypes.string,
 		}),
 		caption: PropTypes.string,
+		typeContent: PropTypes.string,
 		image: PropTypes.string,
 		_id: PropTypes.string,
 		likes: PropTypes.array,
 		comments: PropTypes.array,
+		src: PropTypes.string
 	}).isRequired,
 };
 

@@ -40,6 +40,32 @@ const editProfile = (formData) => {
 	return axios.post(`/api/v1/user/profile/edit`, formData, { withCredentials: true })
 }
 
+const followOrUnfollow = (userProfileId, currentUserId) => {
+	return axios.post(`/api/v1/user/followorunfollow/${userProfileId}`, currentUserId, { withCredentials: true })
+}
+
+const searchUser = (username, lastId = null) => {
+	let url = `/api/v1/user/search/${username}`;
+	if (lastId) {
+		url += `?lastId=${lastId}`;
+	}
+	return axios.get(url, { withCredentials: true })
+}
+
+const getConversationService = () => {
+	return axios.get("/api/v1/user/getconversation", { withCredentials: true })
+}
+
+const createConversationService = (targetId) => {
+	console.log('check ', targetId)
+	return axios.get(
+		`/api/v1/user/createconversation/${targetId}`,
+		// {}, // Phải có body (nếu không gửi gì, truyền `{}`)
+		{ withCredentials: true } // Cấu hình phải nằm trong object thứ 3
+	)
+}
+
 export {
-	registerUser, loginUser, logoutUser, getSuggestedUsers, getProfile, editProfile
+	registerUser, loginUser, logoutUser, getSuggestedUsers, getProfile, editProfile, followOrUnfollow,
+	searchUser, getConversationService, createConversationService
 }

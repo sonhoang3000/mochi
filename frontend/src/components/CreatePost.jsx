@@ -14,7 +14,7 @@ const CreatePost = ({ open, setOpen }) => {
 	const imageRef = useRef()
 	const [file, setFile] = useState("")
 	const [caption, setCaption] = useState("")
-	const [imagePreview, setImagePreview] = useState("")
+	const [filePreview, setFilePreview] = useState("")
 	const [loading, setLoading] = useState(false)
 	const { user } = useSelector(store => store.auth)
 	const { posts } = useSelector(store => store.post)
@@ -25,14 +25,14 @@ const CreatePost = ({ open, setOpen }) => {
 		if (file) {
 			setFile(file)
 			const dataUrl = await readFileAsDataURL(file)
-			setImagePreview(dataUrl)
+			setFilePreview(dataUrl)
 		}
 	}
 
 	const createPostHandler = async () => {
 		const formData = new FormData()
 		formData.append("caption", caption)
-		if (imagePreview) formData.append("image", file)
+		if (filePreview) formData.append("file", file)
 		try {
 			setLoading(true)
 			const res = await addNewPost(formData)
@@ -64,16 +64,23 @@ const CreatePost = ({ open, setOpen }) => {
 				</div>
 				<Textarea value={caption} onChange={(e) => setCaption(e.target.value)} className="focus-visible:ring-transparent border-none" placeholder="Write a caption..." />
 				{
-					imagePreview && (
+					filePreview && (
 						<div className="w-full h-64 flex items-center justify-center">
-							<img src={imagePreview} alt="preview_img" className="object-cover h-full w-full rounded-md" />
+							{file.type.startsWith("image/") ? (
+								<img src={filePreview} alt="preview_img" className="object-cover h-full w-full rounded-md" />
+							) : file.type.startsWith("video/") ? (
+								<video controls className="object-cover h-full w-full rounded-md">
+									<source src={filePreview} type={file.type} />
+									Your browser does not support the video tag.
+								</video>
+							) : null}
 						</div>
 					)
 				}
 				<input ref={imageRef} type="file" className="hidden" onChange={fileChangeHandler} />
 				<Button onClick={() => imageRef.current.click()} className="w-fit mx-auto bg-[#0095F6] hover:bg-[#258bcf]">Select from computer</Button>
 				{
-					imagePreview && (
+					filePreview && (
 						loading ? (
 							<Button>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />

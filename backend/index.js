@@ -10,6 +10,9 @@ import messageRoute from "./routes/message.route.js";
 import postRoute from "./routes/post.route.js";
 import userRoute from "./routes/user.route.js";
 import { app, io, server } from "./socket/socket.js";
+import storyRoute from "./routes/story.route.js"
+import { app, server } from "./socket/socket.js"
+import path from "path"
 
 dotenv.config();
 
@@ -43,12 +46,19 @@ const connectDB = async () => {
         process.exit(1);
     }
 };
+app.use("/api/v1/user", userRoute)
+app.use("/api/v1/post", postRoute)
+app.use("/api/v1/message", messageRoute)
+app.use("/api/v1/story", storyRoute)
 
 const onlineUsers = new Map();
 
+// app.use(express.static(path.join(__dirname, "/frontend/dist")))
+// app.get("*", (req, res) => {
+//       res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+// })
 io.on("connection", async (socket) => {
     console.log(` User connected: ${socket.id}`);
-
     socket.on("user-online", async (userId) => {
         onlineUsers.set(userId, socket.id);
         await User.findByIdAndUpdate(userId, { online: true });

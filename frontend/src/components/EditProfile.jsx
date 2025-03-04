@@ -23,9 +23,13 @@ const EditProfile = () => {
 	const nagivate = useNavigate()
 	const dispatch = useDispatch()
 
+	const [imageUpdated, setImageUpdated] = useState("")
+
 	const fileChangeHandler = (e) => {
 		const file = e.target.files?.[0]
-		if (file) setInput({ ...input, profilePhoto: file });
+		const imageUrl = URL.createObjectURL(file)
+		setImageUpdated(imageUrl)
+		if (file) setInput({ ...input, profilePhoto: file })
 	}
 
 	const selectChangeHandler = (value) => {
@@ -79,6 +83,7 @@ const EditProfile = () => {
 						</div>
 					</div>
 					<input ref={imageRef} onChange={fileChangeHandler} type='file' className='hidden' />
+					{imageUpdated && <img src={imageUpdated} alt="Updated Image" width="200" />}
 					<Button onClick={() => imageRef?.current.click()} className="bg-[#0095F6] h-8 hover:bg-[#318bc7]">Change photo</Button>
 				</div>
 				<div>

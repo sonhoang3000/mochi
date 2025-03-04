@@ -5,21 +5,44 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { MessageCircleCode } from "lucide-react";
 import Messages from "./Messages";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sendMessage } from "@/services/messageService";
 import { setMessages } from "@/redux/chatSlice";
+import { setGetConversation } from '@/redux/authSlice'
 
 const ChatPage = () => {
 	const [textMessage, setTextMessage] = useState("")
-	const { user, suggestedUsers, selectedUser } = useSelector(store => store.auth);
+	const { user, selectedUser, getConversation } = useSelector(store => store.auth);
 	const { onlineUsers, messages } = useSelector(store => store.chat)
+	const [isSending, setIsSending] = useState(false);
 	const dispatch = useDispatch()
+	const inputRef = useRef(null); // Thêm useRef
+
+	useEffect(() => {
+		if (selectedUser && inputRef.current) {
+			inputRef.current.focus(); // Tự động focus vào input khi chọn user
+		}
+	}, [selectedUser]);
 
 	const sendMessageHandler = async (receiverId) => {
 		try {
 			const res = await sendMessage(receiverId, { textMessage })
 			if (res.success) {
 				dispatch(setMessages([...messages, res.newMessage]))
+
+				// Cập nhật hội thoại mới nhất lên đầu Redux store
+				const updatedConversations = getConversation.map(conv => {
+					if (conv._id === receiverId) {
+						return { ...conv, updatedAt: new Date().toISOString() }; // Giả lập update
+					}
+					return conv;
+				});
+
+				// Sort theo `updatedAt` mới nhất
+				updatedConversations.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+				dispatch(setGetConversation(updatedConversations));
+
 				setTextMessage("")
 			}
 		} catch (error) {
@@ -33,6 +56,13 @@ const ChatPage = () => {
 		}
 	}, [])
 
+	const handleSendMessage = async () => {
+		if (isSending || !textMessage.trim()) return;
+		setIsSending(true); // Đánh dấu là đang gửi
+		await sendMessageHandler(selectedUser?._id);
+		setIsSending(false); // Mở lại gửi tin nhắn
+	};
+
 	return (
 		<div className="flex ml-[16%] h-screen">
 			<section className="w-full md:w-1/4 my-8" >
@@ -40,7 +70,7 @@ const ChatPage = () => {
 				<hr className="mb-4 border-gray-300" />
 				<div className="overflow-y-auto h-[80vh]" >
 					{
-						suggestedUsers.map((suggestedUser) => {
+						getConversation.map((suggestedUser) => {
 							const isOnline = onlineUsers.includes(suggestedUser?._id)
 							return (
 								<div onClick={() => dispatch(setSelectedUser(suggestedUser))} className="flex gap-3 items-center p-3 hover:bg-gray-50 cursor-pointer" key={suggestedUser?._id} >
@@ -73,13 +103,16 @@ const ChatPage = () => {
 						</div>
 						<Messages selectedUser={selectedUser} />
 						<div className="flex items-center p-4 border-t border-t-gray-300">
-							<Input value={textMessage} onChange={(e) => setTextMessage(e.target.value)} type="text" className="flex-1 mr-2 focus-visible:ring-transparent" placeholder="Message..."
+							<Input
+								ref={inputRef}  // Gán ref vào input
+								value={textMessage}
+								onChange={(e) => setTextMessage(e.target.value)} type="text" className="flex-1 mr-2 focus-visible:ring-transparent" placeholder="Message..."
 								onKeyDown={(e) => {
 									if (e.key === 'Enter') {
-										sendMessageHandler(selectedUser?._id);
+										handleSendMessage();
 									}
 								}} />
-							<Button onClick={() => sendMessageHandler(selectedUser?._id)} type="submit" >  Send1</Button>
+							<Button onClick={() => sendMessageHandler(selectedUser?._id)} type="submit" >  Send</Button>
 						</div>
 					</section>
 				) : (

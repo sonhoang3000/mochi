@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
       following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
       posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
       bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-      isOnline: { type: Boolean, default: false } ,
+      isOnline: { type: Boolean, default: false },
       role: { type: String, enum: ["user", "admin"], default: "user" },
-
+      stories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
 }, { timestamps: true });
 export const User = mongoose.model('User', userSchema);

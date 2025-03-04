@@ -14,6 +14,7 @@ const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
 	const { selectedPost, posts } = useSelector(store => store.post);
 	const [comment, setComment] = useState([])
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const dispatch = useDispatch()
 
 	useEffect(() => {
@@ -21,6 +22,21 @@ const CommentDialog = ({ open, setOpen }) => {
 			setComment(selectedPost.comments)
 		}
 	}, [selectedPost])
+
+	useEffect(() => {
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") {
+				setOpen(false);
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
+
 
 	const changeEventHandler = (a) => {
 		const inputText = a.target.value
@@ -32,6 +48,8 @@ const CommentDialog = ({ open, setOpen }) => {
 	}
 
 	const sendMessageHandler = async () => {
+		if (isSubmitting) return; // Tránh gọi hàm nếu đã có yêu cầu đang xử lý
+		setIsSubmitting(true);
 		try {
 			const res = await addComment(selectedPost._id, { text })
 			if (res.success) {
@@ -46,6 +64,8 @@ const CommentDialog = ({ open, setOpen }) => {
 			}
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsSubmitting(false); // Mở khóa sau khi hoàn tất
 		}
 	}
 
@@ -54,25 +74,38 @@ const CommentDialog = ({ open, setOpen }) => {
 			<DialogContent onInteractOutside={() => setOpen(false)} className="max-w-5xl p-0 flex flex-col">
 				<div className="flex flex-1">
 					<div className="w-1/2">
-						<img
-							src={selectedPost?.image}
-							alt="post_img"
-							className="w-full h-full object-cover rounded-l-lg"
-						/>
+						{selectedPost?.typeContent === "image" ? (
+							<img
+								className="rounded-sm my-2 w-full aspect-square object-contain"
+								src={selectedPost?.src}
+								alt="post_img"
+							// onDoubleClick={likeOrDislikeHandler}
+							/>
+						) : selectedPost?.typeContent === "video" ? (
+							<video
+								className="rounded-sm my-2 w-full aspect-square object-contain"
+								controls
+							// onDoubleClick={likeOrDislikeHandler}
+							>
+								<source src={selectedPost?.src} type="video/mp4" />
+								Your browser does not support the video tag.
+							</video>
+						) : null}
 					</div>
 					<div className="w-1/2 flex flex-col justify-between">
 						<div className="flex items-center justify-between p-4">
 							<div className="flex gap-3 items-center ">
-								<Link>
+								<Link to={`/profile/${selectedPost?.author?._id}`} >
 									<Avatar>
 										<AvatarImage src={selectedPost?.author?.profilePicture} />
 										<AvatarFallback>CN</AvatarFallback>
 									</Avatar>
 								</Link>
 								<div>
-									<Link className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
+									<Link to={`/profile/${selectedPost?.author?._id}`} className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
 									{/* <span className="text-gray-600 text-sm">Bio here ...</span> */}
 								</div>
+
 							</div>
 
 							<Dialog>

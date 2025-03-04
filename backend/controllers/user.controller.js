@@ -1,7 +1,8 @@
+import { User } from "../models/user.model.js";
+import { Conversation } from "../models/conversation.model.js"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Post } from "../models/post.model.js";
-import { User } from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/datauri.js";
 export const register = async (req, res) => {
@@ -103,7 +104,13 @@ export const logout = async (_, res) => {
 export const getProfile = async (req, res) => {
 	try {
 		const userId = req.params.id;
-		let user = await User.findById(userId).populate({ path: 'posts', createdAt: -1 }).populate('bookmarks');
+		let user = await User.findById(userId)
+			.populate({
+				path: 'posts',
+				options: { sort: { createdAt: -1 } } // Sắp xếp posts theo createdAt giảm dần
+			})
+			.populate('following')
+			.populate('bookmarks');
 		return res.status(200).json({
 			user,
 			success: true
@@ -150,33 +157,47 @@ export const editProfile = async (req, res) => {
 };
 export const getSuggestedUsers = async (req, res) => {
 	try {
+		// const { page = 1, limit = 5 } = req.query; // Lấy số trang và giới hạn từ query
+		// const currentUserId = new mongoose.Types.ObjectId(req.id);
+
+		// const suggestedUsers = await User.aggregate([
+		// 	{ $match: { _id: { $ne: currentUserId } } }, // Loại trừ user hiện tại
+		// 	// { $sample: { size: parseInt(limit) } }, // Chọn ngẫu nhiên số lượng user
+		// ]);
+
 		const suggestedUsers = await User.find({ _id: { $ne: req.id } }).select("-password");
 		if (!suggestedUsers) {
 			return res.status(400).json({
 				message: 'Currently do not have any users',
 			})
 		};
+		if (!suggestedUsers.length) {
+			return res.status(400).json({ message: 'No more users available' });
+		}
 		return res.status(200).json({
 			success: true,
 			users: suggestedUsers
-		})
+			// page: parseInt(page),
+		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
+
 export const followOrUnfollow = async (req, res) => {
 	try {
-		const followKrneWala = req.id; // patel
-		const jiskoFollowKrunga = req.params.id; // shivani
-		if (followKrneWala === jiskoFollowKrunga) {
+		const currentUserId = req.id;
+		const targetUserId = req.params.id;
+		if (currentUserId === targetUserId) {
 			return res.status(400).json({
 				message: 'You cannot follow/unfollow yourself',
 				success: false
 			});
 		}
 
-		const user = await User.findById(followKrneWala);
-		const targetUser = await User.findById(jiskoFollowKrunga);
+		const user = await User.findById(currentUserId);
+		const targetUser = await User.findById(targetUserId);
 
 		if (!user || !targetUser) {
 			return res.status(400).json({
@@ -185,23 +206,113 @@ export const followOrUnfollow = async (req, res) => {
 			});
 		}
 		// kiểm tra folo hay là unfolo và ngược lại
-		const isFollowing = user.following.includes(jiskoFollowKrunga);
+		const isFollowing = user.following.includes(targetUserId);
 		if (isFollowing) {
 			// unfollow logic nếu dang folo
 			await Promise.all([
-				User.updateOne({ _id: followKrneWala }, { $pull: { following: jiskoFollowKrunga } }),
-				User.updateOne({ _id: jiskoFollowKrunga }, { $pull: { followers: followKrneWala } }),
+				User.updateOne({ _id: currentUserId }, { $pull: { following: targetUserId } }),
+				User.updateOne({ _id: targetUserId }, { $pull: { followers: currentUserId } }),
 			])
 			return res.status(200).json({ message: 'Unfollowed successfully', success: true });
 		} else {
 			// follow logic nếu chưa folo
 			await Promise.all([
-				User.updateOne({ _id: followKrneWala }, { $push: { following: jiskoFollowKrunga } }),
-				User.updateOne({ _id: jiskoFollowKrunga }, { $push: { followers: followKrneWala } }),
+				User.updateOne({ _id: currentUserId }, { $push: { following: targetUserId } }),
+				User.updateOne({ _id: targetUserId }, { $push: { followers: currentUserId } }),
 			])
 			return res.status(200).json({ message: 'followed successfully', success: true });
 		}
 	} catch (error) {
 		console.log(error);
 	}
+}
+
+export const searchUser = async (req, res) => {
+	try {
+		const { limit = 10, lastId } = req.query; // Lấy lastId từ query
+		const { username } = req.params; // Lấy username từ URL
+
+		if (!username) {
+			return res.status(400).json({ message: "Username is required" });
+		}
+
+		// Tạo bộ lọc tìm kiếm
+		let filter = { username: { $regex: username, $options: "i" } };
+		if (lastId) {
+			filter._id = { $gt: lastId }; // Chỉ lấy user có ID lớn hơn lastId
+		}
+
+		// Truy vấn danh sách user
+		const users = await User.find(filter)
+			.limit(parseInt(limit))
+			.sort({ _id: 1 })
+			.select("-password"); // Sắp xếp theo ID tăng dần
+
+		// Lấy ID cuối cùng trong danh sách
+		const nextLastId = users.length > 0 ? users[users.length - 1]._id : null;
+
+		res.status(200).json({
+			users,
+			nextLastId, // Gửi lastId để request tiếp theo sử dụng
+			hasMore: users.length === parseInt(limit), // Nếu đủ limit thì vẫn còn dữ liệu
+			message: 'search okie ',
+			success: true
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+export const getConversation = async (req, res) => {
+	try {
+		const currentUserId = req.id; // Lấy ID user hiện tại từ request
+
+		const conversations = await Conversation.find({
+			participants: currentUserId // Lọc các cuộc trò chuyện có user này
+		})
+			.populate("participants") // Lấy thông tin người tham gia
+			.sort({ updatedAt: -1 }) // Sắp xếp theo updatedAt giảm dần
+			.select("-messages"); // Không lấy danh sách tin nhắn
+
+		// Lọc để loại bỏ currentUserId khỏi participants
+		const filteredConversations = conversations.map(conv => ({
+			...conv.toObject(),
+			participants: conv.participants.filter(p => p._id.toString() !== currentUserId)
+		}));
+
+		return res.status(200).json({
+			message: 'Lấy danh sách cuộc trò chuyện thành công',
+			success: true,
+			conversations: filteredConversations
+		});
+
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+export const createConversation = async (req, res) => {
+	const senderId = req.id;
+	const receiverId = req.params.id;
+
+	let conversation = await Conversation.findOne({
+		participants: { $all: [senderId, receiverId] }
+	});
+
+	if (!conversation) {
+		conversation = await Conversation.create({
+			participants: [senderId, receiverId]
+		})
+	} else {
+		conversation.updatedAt = new Date();
+		await conversation.save(); // Lưu thay đổi vào database
+	}
+
+	return res.status(200).json({
+		success: true,
+		message: 'Create Chat succeed.',
+		conversation
+	})
 }

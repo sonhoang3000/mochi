@@ -3,7 +3,6 @@ import Post from "./Post"
 
 const Posts = () => {
 	const { posts } = useSelector(store => store.post)
-	console.log(posts);
 	return (
 		<div>
 			{

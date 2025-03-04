@@ -6,7 +6,6 @@ import { getProfile } from "@/services/userService"
 
 const useGetUserProfile = (userId) => {
       const dispatch = useDispatch()
-      // const [userProfile,setUserProfile] = useState(null)
       useEffect(() => {
             const fetchUserProfile = async () => {
                   try {

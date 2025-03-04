@@ -17,6 +17,10 @@ import Admin from './pages/admin'
 import { setOnlineUsers } from './redux/chatSlice'
 import { setLikeNotification } from './redux/rtnSlice'
 import { setSocket } from './redux/socketSlice'
+import ProtectedRoutes from './components/ProtectedRoutes'
+import SearchUsers from './components/SearchUsers'
+import Explore from './components/Explore'
+import SuggestedUsers from './components/SuggestedUsers'
 const browserRouter = createBrowserRouter([
 	{
 		path: "/",
@@ -40,19 +44,31 @@ const browserRouter = createBrowserRouter([
 			},
 			{
 				path: "/admin",
-				element: <ProtectedRoutes> <Admin/></ProtectedRoutes> 
+				element: <ProtectedRoutes> <Admin /></ProtectedRoutes>
 			},
 			{
 				path: "/admin/dashboard",
-				element: <ProtectedRoutes> <AdminDashboard /></ProtectedRoutes> 
+				element: <ProtectedRoutes> <AdminDashboard /></ProtectedRoutes>
 			},
 			{
 				path: "/admin/posts",
-				element: <ProtectedRoutes> <AdminPosts /></ProtectedRoutes> 
+				element: <ProtectedRoutes> <AdminPosts /></ProtectedRoutes>
 			},
 			{
 				path: "/admin/users",
-				element: <ProtectedRoutes> <AdminUsers /></ProtectedRoutes> 
+				element: <ProtectedRoutes> <AdminUsers /></ProtectedRoutes>
+			},
+			{
+				path: "/search",
+				element: <ProtectedRoutes><SearchUsers /></ProtectedRoutes>
+			},
+			{
+				path: "/explore",
+				element: <ProtectedRoutes><Explore /></ProtectedRoutes>
+			},
+			{
+				path: "/suggested/:type",
+				element: <ProtectedRoutes><SuggestedUsers /></ProtectedRoutes>
 			},
 		]
 	},
