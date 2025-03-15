@@ -15,6 +15,7 @@ import { EventEmitter } from "events";
 
 EventEmitter.defaultMaxListeners = 20;
 
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -51,7 +52,6 @@ app.use("/api/v1/story", storyRoute);
 app.use("/admin", adminRoute);
 app.use("/api/v1/ai", aiRoutes);
 
-// WebSocket - Socket.IO
 const onlineUsers = new Map();
 
 io.on("connection", async (socket) => {
