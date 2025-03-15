@@ -24,7 +24,6 @@ const SuggestedUsers = () => {
 			if (res.success) {
 				const isFollowing = followingArray.includes(userSuggestedId);
 
-				// Cập nhật Redux store folo or unfolo 
 				dispatch(setAuthUser({
 					...user,
 					following: isFollowing
