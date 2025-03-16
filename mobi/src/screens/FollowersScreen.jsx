@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Image, Button, TouchableOpacity } from "react-native";
-import { getFollowers, followOrUnfollowUser } from "../api/api"; 
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { getFollowers, followOrUnfollowUser } from "../api/api";
 
 const FollowersScreen = ({ route }) => {
   const { userId } = route.params;
@@ -39,7 +39,9 @@ const FollowersScreen = ({ route }) => {
         <Text style={styles.username}>{item.username}</Text>
         <Text style={styles.email}>{item.email}</Text>
       </View>
-      <TouchableOpacity onPress={() => handleFollow(item._id)} style={[styles.followButton, item.isFollowing ? styles.unfollow : styles.follow]}>
+      <TouchableOpacity
+        onPress={() => handleFollow(item._id)}
+        style={[styles.followButton, item.isFollowing ? styles.unfollow : styles.follow]}>
         <Text style={styles.buttonText}>{item.isFollowing ? "Following" : "Follow"}</Text>
       </TouchableOpacity>
     </View>
@@ -57,18 +59,60 @@ const FollowersScreen = ({ route }) => {
   );
 };
 
-const styles = {
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  header: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
-  userItem: { flexDirection: "row", alignItems: "center", padding: 10, borderBottomWidth: 1, borderBottomColor: "#ddd" },
-  avatar: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
-  userInfo: { flex: 1, justifyContent: "center" },
-  username: { fontSize: 16, fontWeight: "bold" },
-  email: { fontSize: 14, color: "gray" },
-  followButton: { paddingVertical: 5, paddingHorizontal: 15, borderRadius: 5 },
-  follow: { backgroundColor: "blue" },
-  unfollow: { backgroundColor: "gray" },
-  buttonText: { color: "white", fontWeight: "bold" },
-};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#ff69b4",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  userItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  userInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  email: {
+    fontSize: 14,
+    color: "gray",
+  },
+  followButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  follow: {
+    backgroundColor: "#ff69b4", // màu hồng đậm
+  },
+  unfollow: {
+    backgroundColor: "#ffc0cb", // màu hồng nhạt
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+});
 
 export default FollowersScreen;

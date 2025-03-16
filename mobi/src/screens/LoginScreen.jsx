@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import { login as loginAPI } from '../api/api'; 
-import { AuthContext } from '../context/AuthContext'; 
+import { login as loginAPI } from '../api/api';
+import { AuthContext } from '../context/AuthContext';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext); 
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -39,6 +39,7 @@ const LoginScreen = ({ navigation }) => {
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
+        placeholderTextColor="#999"
       />
       <TextInput
         style={styles.input}
@@ -46,6 +47,7 @@ const LoginScreen = ({ navigation }) => {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        placeholderTextColor="#999"
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -65,30 +67,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff0f5', // hồng pastel nhẹ nhàng
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    marginBottom: 30,
+    color: '#ff69b4', // hồng đậm
   },
   input: {
     width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
+    borderColor: '#ffb6c1', // viền hồng nhẹ
+    borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
     backgroundColor: '#fff',
+    color: '#333',
   },
   button: {
     width: '100%',
-    backgroundColor: '#007bff',
+    backgroundColor: '#ff69b4', // màu hồng chính
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#ff69b4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   buttonText: {
     color: '#fff',
@@ -96,8 +104,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   registerText: {
-    marginTop: 15,
-    color: '#007bff',
+    marginTop: 20,
+    color: '#ff69b4',
+    fontSize: 14,
   },
 });
 

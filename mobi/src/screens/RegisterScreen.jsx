@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import { register } from '../api/api'; 
+import { register } from '../api/api';
 
 const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -25,13 +25,14 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Đăng Ký</Text>
+      <Text style={styles.title}>🌸 Đăng Ký Tài Khoản</Text>
 
       <TextInput
         style={styles.input}
         placeholder="Tên đăng nhập"
         value={username}
         onChangeText={setUsername}
+        placeholderTextColor="#d48aa6"
       />
       <TextInput
         style={styles.input}
@@ -39,6 +40,7 @@ const RegisterScreen = ({ navigation }) => {
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
+        placeholderTextColor="#d48aa6"
       />
       <TextInput
         style={styles.input}
@@ -46,6 +48,7 @@ const RegisterScreen = ({ navigation }) => {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        placeholderTextColor="#d48aa6"
       />
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
@@ -65,30 +68,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff0f5', // nền hồng pastel
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    marginBottom: 25,
+    color: '#e91e63',
+    textAlign: 'center',
   },
   input: {
     width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#f8bbd0',
     borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 15,
     backgroundColor: '#fff',
+    color: '#d81b60',
   },
   button: {
     width: '100%',
-    backgroundColor: '#007bff', 
+    backgroundColor: '#ec407a',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    shadowColor: '#d81b60',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonText: {
     color: '#fff',
@@ -97,7 +107,8 @@ const styles = StyleSheet.create({
   },
   loginText: {
     marginTop: 15,
-    color: '#007bff',
+    color: '#d81b60',
+    fontSize: 14,
   },
 });
 

@@ -29,7 +29,7 @@ const UploadScreen = ({ navigation }) => {
     }
 
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaType.Image, 
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -71,7 +71,7 @@ const UploadScreen = ({ navigation }) => {
         comments: [],
       };
 
-      addNewPost(newPost); // Cập nhật post context
+      addNewPost(newPost);
       Alert.alert('Thành công', 'Bài viết đã được đăng!');
       setImage(null);
       setCaption('');
@@ -86,7 +86,7 @@ const UploadScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Tạo Bài Viết Mới</Text>
+      <Text style={styles.header}>🌸 Tạo Bài Viết Mới 🌸</Text>
 
       <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
         {image ? (
@@ -98,10 +98,11 @@ const UploadScreen = ({ navigation }) => {
 
       <TextInput
         style={styles.captionInput}
-        placeholder="Nhập caption..."
+        placeholder="Viết caption dễ thương..."
         value={caption}
         onChangeText={setCaption}
         multiline
+        placeholderTextColor="#d48aa6"
       />
 
       <TouchableOpacity
@@ -120,35 +121,61 @@ const UploadScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  header: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff0f5', // nền hồng nhạt
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#e91e63',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
   imagePicker: {
     width: '100%',
     height: 300,
-    backgroundColor: '#eee',
-    borderRadius: 10,
+    backgroundColor: '#fce4ec',
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#f8bbd0',
   },
-  selectedImage: { width: '100%', height: '100%', borderRadius: 10 },
-  imagePickerText: { fontSize: 16, color: '#888' },
+  selectedImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+  },
+  imagePickerText: {
+    fontSize: 16,
+    color: '#d81b60',
+  },
   captionInput: {
     height: 100,
-    borderColor: '#ccc',
+    borderColor: '#f8bbd0',
     borderWidth: 1,
     borderRadius: 10,
-    padding: 10,
+    padding: 12,
     marginBottom: 20,
+    backgroundColor: '#fff',
+    color: '#d81b60',
+    fontSize: 15,
     textAlignVertical: 'top',
   },
   uploadButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#ec407a',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
   },
-  uploadButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  uploadButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default UploadScreen;

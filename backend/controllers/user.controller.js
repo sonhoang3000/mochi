@@ -161,36 +161,40 @@ export const editProfile = async (req, res) => {
 	}
   };
   
-export const getSuggestedUsers = async (req, res) => {
+  export const getSuggestedUsers = async (req, res) => {
 	try {
-		// const { page = 1, limit = 5 } = req.query; // Lấy số trang và giới hạn từ query
-		// const currentUserId = new mongoose.Types.ObjectId(req.id);
-
-		// const suggestedUsers = await User.aggregate([
-		// 	{ $match: { _id: { $ne: currentUserId } } }, // Loại trừ user hiện tại
-		// 	// { $sample: { size: parseInt(limit) } }, // Chọn ngẫu nhiên số lượng user
-		// ]);
-
-		const suggestedUsers = await User.find({ _id: { $ne: req.id } }).select("-password");
-		if (!suggestedUsers) {
-			return res.status(400).json({
-				message: 'Currently do not have any users',
-			})
-		};
-		if (!suggestedUsers.length) {
-			return res.status(400).json({ message: 'No more users available' });
-		}
+	  const { page = 1, limit = 10 } = req.query;
+	  const skip = (page - 1) * limit;
+  
+	  // Áp dụng phân trang với skip + limit
+	  const suggestedUsers = await User.find({ _id: { $ne: req.id } })
+		.select("-password")
+		.skip(parseInt(skip))
+		.limit(parseInt(limit));
+  
+	  // Tổng số user để tính tổng số trang
+	  const totalUsers = await User.countDocuments({ _id: { $ne: req.id } });
+  
+	  if (!suggestedUsers || suggestedUsers.length === 0) {
 		return res.status(200).json({
-			success: true,
-			users: suggestedUsers
-			// page: parseInt(page),
+		  success: true,
+		  users: [],
+		  message: 'No more users available',
 		});
+	  }
+  
+	  return res.status(200).json({
+		success: true,
+		users: suggestedUsers,
+		totalPages: Math.ceil(totalUsers / limit),
+		currentPage: parseInt(page),
+	  });
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error' });
+	  console.error(error);
+	  res.status(500).json({ message: 'Internal Server Error' });
 	}
-};
-
+  };
+  
 export const followOrUnfollow = async (req, res) => {
 	try {
 		const currentUserId = req.id;

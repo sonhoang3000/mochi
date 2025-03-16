@@ -61,7 +61,7 @@ const EditProfileScreen = () => {
       const res = await editProfile(formData);
 
       if (res.success) {
-        updateUser(res.user); // update context
+        updateUser(res.user);
         Toast.show({ type: 'success', text1: res.message });
         navigation.navigate('Profile');
       }
@@ -78,41 +78,40 @@ const EditProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Edit Profile</Text>
+      <Text style={styles.title}>Chỉnh sửa hồ sơ</Text>
 
       <TouchableOpacity onPress={handlePickImage} style={styles.avatarContainer}>
-      <Image
-  source={
-    imageUri
-      ? { uri: imageUri }
-      : user?.profilePicture
-      ? { uri: user.profilePicture }
-      : null
-  }
-  style={styles.avatar}
-/>
-
-        <Text style={styles.changePhotoText}>Change Profile Photo</Text>
+        <Image
+          source={
+            imageUri
+              ? { uri: imageUri }
+              : user?.profilePicture
+              ? { uri: user.profilePicture }
+              : null
+          }
+          style={styles.avatar}
+        />
+        <Text style={styles.changePhotoText}>Thay đổi ảnh đại diện</Text>
       </TouchableOpacity>
 
-      <Text style={styles.label}>Bio</Text>
+      <Text style={styles.label}>Giới thiệu bản thân</Text>
       <TextInput
         style={styles.input}
         value={bio}
         onChangeText={setBio}
-        placeholder="Enter your bio"
+        placeholder="Nhập tiểu sử"
         multiline
       />
 
-      <Text style={styles.label}>Gender</Text>
+      <Text style={styles.label}>Giới tính</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={gender}
           onValueChange={(itemValue) => setGender(itemValue)}
         >
-          <Picker.Item label="Select Gender" value="" />
-          <Picker.Item label="Male" value="male" />
-          <Picker.Item label="Female" value="female" />
+          <Picker.Item label="Chọn giới tính" value="" />
+          <Picker.Item label="Nam" value="male" />
+          <Picker.Item label="Nữ" value="female" />
         </Picker>
       </View>
 
@@ -120,7 +119,7 @@ const EditProfileScreen = () => {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Save Changes</Text>
+          <Text style={styles.buttonText}>Lưu thay đổi</Text>
         )}
       </TouchableOpacity>
 
@@ -129,17 +128,18 @@ const EditProfileScreen = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff0f5', // hồng pastel
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#d63384',
+    textAlign: 'center',
   },
   avatarContainer: {
     alignItems: 'center',
@@ -149,34 +149,38 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#ccc',
+    backgroundColor: '#f8d7da',
   },
   changePhotoText: {
     marginTop: 8,
-    color: '#007bff',
+    color: '#e83e8c',
+    fontWeight: '600',
   },
   label: {
-    marginBottom: 4,
+    marginBottom: 6,
     fontWeight: '600',
+    color: '#c2185b',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#f8bbd0',
     borderRadius: 10,
     padding: 12,
     marginBottom: 16,
     minHeight: 60,
+    backgroundColor: '#fff',
     textAlignVertical: 'top',
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#f8bbd0',
     borderRadius: 10,
     marginBottom: 16,
     overflow: 'hidden',
+    backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#0095F6',
+    backgroundColor: '#ec407a',
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: '600',
+    fontSize: 16,
   },
 });
 

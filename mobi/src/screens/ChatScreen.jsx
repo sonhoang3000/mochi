@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import {
-  getMessagesInChat,
+  getAllMessages,
   sendMessage,
 } from '../api/api'; // Gọi API getMessagesInChat, sendMessage
 import { Ionicons } from '@expo/vector-icons';
@@ -33,7 +33,7 @@ const ChatScreen = ({ route }) => {
   const fetchChatMessages = async () => {
     try {
       setLoading(true);
-      const res = await getMessagesInChat(chatId);
+      const res = await getAllMessages(chatId);
       setMessages(res?.messages || []);
     } catch (err) {
       console.log('Lỗi lấy tin nhắn:', err);

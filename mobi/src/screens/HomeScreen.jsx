@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-<<<<<<< HEAD
 import {
   View,
   Text,
@@ -23,31 +22,6 @@ import {
 } from '../api/api';
 import { AuthContext } from '../context/AuthContext';
 import { PostContext } from '../context/PostContext';
-=======
-import { 
-  View, 
-  Text, 
-  Image, 
-  FlatList, 
-  TouchableOpacity, 
-  TextInput, 
-  StyleSheet, 
-  Alert, 
-  RefreshControl 
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { 
-  getAllPosts, 
-  likePost, 
-  dislikePost, 
-  bookmarkPost, 
-  addComment, 
-  deletePost 
-} from '../api/api';
-import { AuthContext } from '../context/AuthContext';
-import { PostContext } from '../context/PostContext';
-import { Ionicons } from '@expo/vector-icons';
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
 
 const HomeScreen = ({ navigation }) => {
   const [commentText, setCommentText] = useState('');
@@ -103,15 +77,9 @@ const HomeScreen = ({ navigation }) => {
   const handleBookmark = async (postId, isBookmarked) => {
     try {
       await bookmarkPost(postId);
-<<<<<<< HEAD
       await fetchPosts(); // reload lại dữ liệu bookmark
     } catch (error) {
       console.error('Lỗi khi bookmark:', error);
-=======
-      await fetchPosts(); // Reload lại dữ liệu mới từ server
-    } catch (error) {
-      console.error('Lỗi khi lưu bài viết:', error);
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
     }
   };
 
@@ -132,36 +100,20 @@ const HomeScreen = ({ navigation }) => {
 
   const handleDeletePost = (postId) => {
     Alert.alert(
-<<<<<<< HEAD
       'Xóa bài viết',
       'Bạn có chắc chắn muốn xóa bài viết này?',
       [
         { text: 'Hủy', style: 'cancel' },
         {
           text: 'Xóa',
-=======
-      "Xóa bài viết",
-      "Bạn có chắc chắn muốn xóa bài viết này?",
-      [
-        { text: "Hủy", style: "cancel" },
-        { 
-          text: "Xóa", 
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
           onPress: async () => {
             try {
               await deletePost(postId, token);
               setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
-<<<<<<< HEAD
               Alert.alert('Thành công', 'Bài viết đã được xóa');
             } catch (error) {
               console.error('Lỗi xóa bài viết:', error);
               Alert.alert('Lỗi', 'Không thể xóa bài viết');
-=======
-              Alert.alert("Thành công", "Bài viết đã được xóa");
-            } catch (error) {
-              console.error("Lỗi xóa bài viết:", error);
-              Alert.alert("Lỗi", "Không thể xóa bài viết. Vui lòng thử lại.");
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
             }
           }
         }
@@ -172,10 +124,6 @@ const HomeScreen = ({ navigation }) => {
   const renderItem = ({ item }) => {
     const isLiked = item.likes?.includes(userId);
     const isBookmarked = item.bookmarks?.includes(userId);
-<<<<<<< HEAD
-=======
-    // Chỉ hiển thị tối đa 2 bình luận
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
     const displayedComments = item.comments ? item.comments.slice(0, 2) : [];
 
     return (
@@ -186,13 +134,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.avatar}
           />
           <View style={styles.usernameContainer}>
-<<<<<<< HEAD
             <Text style={styles.username}>{item.author?.username}</Text>
-=======
-            <Text style={styles.username}>
-              {item.author?.username || ''}
-            </Text>
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
             {item.author?._id === userId && (
               <View style={styles.authorBadge}>
                 <Text style={styles.authorBadgeText}>Author</Text>
@@ -206,22 +148,11 @@ const HomeScreen = ({ navigation }) => {
           )}
         </View>
 
-<<<<<<< HEAD
         <Image source={{ uri: item.src }} style={styles.postImage} />
 
         <View style={styles.actions}>
           <TouchableOpacity onPress={() => handleLike(item._id, isLiked)}>
             <Icon name={isLiked ? 'heart' : 'heart-o'} size={24} style={[styles.icon, isLiked && styles.liked]} />
-=======
-        <TouchableOpacity onPress={() => navigation.navigate('AllComments', { postId: selectedPost._id })}>
-          <Image source={{ uri: item.src }} style={styles.postImage} />
-        </TouchableOpacity>
-
-
-        <View style={styles.actions}>
-          <TouchableOpacity onPress={() => handleLike(item._id, isLiked)}>
-            <Icon name={isLiked ? "heart" : "heart-o"} size={24} style={[styles.icon, isLiked && styles.liked]} />
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setCommentingPostId(item._id)}>
             <Icon name="comment-o" size={24} style={styles.icon} />
@@ -230,30 +161,17 @@ const HomeScreen = ({ navigation }) => {
             <Icon name="paper-plane-o" size={24} style={styles.icon} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleBookmark(item._id, isBookmarked)}>
-<<<<<<< HEAD
             <Icon
               name={isBookmarked ? 'bookmark' : 'bookmark-o'}
               size={24}
               style={[styles.icon, isBookmarked && styles.bookmarked]}
-=======
-            <Icon 
-              name={isBookmarked ? "bookmark" : "bookmark-o"} 
-              size={24} 
-              style={[styles.icon, isBookmarked && styles.bookmarked]} 
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
             />
           </TouchableOpacity>
         </View>
 
-<<<<<<< HEAD
         <Text style={styles.likeText}>{item.likes?.length || 0} lượt thích</Text>
         <TouchableOpacity onPress={() => setCommentingPostId(item._id)}>
           <Text style={styles.commentText}>{item.comments?.length || 0} bình luận</Text>
-=======
-        <Text style={styles.likeText}>{item.likes?.length || 0} likes</Text>
-        <TouchableOpacity onPress={() => setCommentingPostId(item._id)}>
-          <Text style={styles.commentText}>{item.comments?.length || 0} comments</Text>
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
         </TouchableOpacity>
 
         <Text style={styles.caption}>
@@ -262,26 +180,14 @@ const HomeScreen = ({ navigation }) => {
         </Text>
 
         {displayedComments.map((comment, index) => (
-<<<<<<< HEAD
           <View key={comment._id || `${item._id}-${index}`} style={styles.commentItem}>
             <Text style={styles.commentText}>
               <Text style={styles.commentUsername}>{comment.user?.username}</Text>: {comment.text}
-=======
-          <View key={comment._id ? comment._id : `${item._id}-${index}`} style={styles.commentItem}>
-            <Text style={styles.commentText}>
-              <Text style={styles.commentUsername}>
-                {comment.user?.username || ''}
-              </Text>: {comment.text}
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
             </Text>
           </View>
         ))}
 
-<<<<<<< HEAD
         {item.comments?.length > 2 && (
-=======
-        {item.comments && item.comments.length > 2 && (
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
           <TouchableOpacity onPress={() => navigation.navigate('AllCommentsScreen', { post: item })}>
             <Text style={styles.viewAllCommentsText}>Xem tất cả {item.comments.length} bình luận</Text>
           </TouchableOpacity>
@@ -304,7 +210,6 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-<<<<<<< HEAD
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity
@@ -330,12 +235,19 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffe4e1',
+  },
+  
   postContainer: {
     marginBottom: 20,
     backgroundColor: '#fff',
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd'
+    borderBottomColor: '#ddd',
+    backgroundColor: '#ffe4e1',
+
   },
   userInfo: {
     flexDirection: 'row',
@@ -406,217 +318,55 @@ const styles = StyleSheet.create({
   },
   commentItem: {
     paddingHorizontal: 10,
-    marginTop: 3
+    marginTop: 4
   },
   commentUsername: {
     fontWeight: 'bold'
   },
   viewAllCommentsText: {
+    color: '#007bff',
     paddingHorizontal: 10,
-    color: '#888',
-    marginTop: 5
+    marginTop: 4
   },
   commentInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
     paddingHorizontal: 10,
-    marginTop: 10
+    paddingVertical: 6,
+    marginTop: 8
   },
   commentInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     marginRight: 10
   },
   fab: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#3498db',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 999
+    backgroundColor: '#000',
+    padding: 14,
+    borderRadius: 30,
+    elevation: 5,
+    zIndex: 10
   },
-=======
-    return (
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-  style={styles.profileFab}
-  onPress={() => navigation.navigate('Messages', { userId })}
->
-<Ionicons name="chatbubble-outline" size={24} color="#fff" />
-</TouchableOpacity>
-
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item._id}
-          renderItem={renderItem}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          showsVerticalScrollIndicator={false}
-        />
-    
-        {/* FAB Upload Button */}
-        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Upload')}>
-          <Icon name="plus" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-    );
-  };    
-
-const styles = StyleSheet.create({
-  profileButton: {
-    padding: 10,
-    backgroundColor: '#3498db',
-    alignSelf: 'flex-end',
-    borderRadius: 5,
-    margin: 10,
-  },
-  profileButtonText: { 
-    color: '#fff', 
-    fontWeight: 'bold' 
-  },
-  postContainer: { 
-    marginBottom: 20, 
-    backgroundColor: '#fff', 
-    paddingBottom: 10, 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#ddd' 
-  },
-  userInfo: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    padding: 10, 
-    position: 'relative' 
-  },
-  avatar: { 
-    width: 40, 
-    height: 40, 
-    borderRadius: 20, 
-    marginRight: 10 
-  },
-  usernameContainer: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
-  },
-  username: { 
-    fontWeight: 'bold', 
-    fontSize: 16 
-  },
-  authorBadge: { 
-    backgroundColor: '#000', 
-    paddingHorizontal: 6, 
-    paddingVertical: 2, 
-    borderRadius: 4, 
-    marginLeft: 5 
-  },
-
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
   profileFab: {
     position: 'absolute',
-    top: 50,
+    top: 40,
     right: 20,
-    backgroundColor: '#3498db',
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 999,
-<<<<<<< HEAD
-    elevation: 6
+    backgroundColor: '#000',
+    padding: 12,
+    borderRadius: 30,
+    zIndex: 10,
+    elevation: 5
   }
-=======
-    elevation: 6,
-  },
-    
-  authorBadgeText: { 
-    color: '#fff', 
-    fontSize: 10 
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    padding: 5,
-    borderRadius: 5,
-    position: 'absolute',
-    right: 10,
-  },
-  postImage: { 
-    width: '100%', 
-    height: 400 
-  },
-  actions: { 
-    flexDirection: 'row', 
-    padding: 10 
-  },
-  icon: { 
-    marginRight: 15 
-  },
-  bookmarked: {
-    color: '#000',
-    fontSize: 26,
-  },
-  liked: { 
-    color: 'red' 
-  },
-  likeText: { 
-    paddingHorizontal: 10, 
-    fontWeight: 'bold' 
-  },
-  commentText: { 
-    paddingHorizontal: 10, 
-    color: 'gray' 
-  },
-  caption: { 
-    paddingHorizontal: 10, 
-    marginTop: 5 
-  },
-  commentItem: { 
-    paddingHorizontal: 10, 
-    marginTop: 2, 
-    paddingVertical: 5 
-  },
-  commentUsername: { 
-    fontWeight: 'bold' 
-  },
-  viewAllCommentsText: {
-    paddingHorizontal: 10,
-    color: '#0095f6',
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
-  commentInputContainer: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingHorizontal: 10, 
-    marginTop: 5 
-  },
-  commentInput: { 
-    flex: 1, 
-    borderWidth: 1, 
-    borderColor: '#ddd', 
-    borderRadius: 5, 
-    paddingHorizontal: 10, 
-    height: 40 
-  },
-  fab: { 
-    position: 'absolute', 
-    bottom: 20, 
-    right: 20, 
-    backgroundColor: '#3498db', 
-    width: 50, 
-    height: 50, 
-    borderRadius: 25, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    elevation: 5 
-  },
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
 });
+
 
 export default HomeScreen;

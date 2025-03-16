@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   View, Text, Image, FlatList, TouchableOpacity, StyleSheet,
-  Dimensions, ActivityIndicator, Alert, RefreshControl
+  Dimensions, Alert, RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AuthContext } from '../context/AuthContext';
 import { getUserProfile, getUserPosts } from '../api/api';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 const screenWidth = Dimensions.get('window').width;
 
 const ProfileScreen = ({ route, navigation }) => {
-  const { user, userId, isLoading } = useContext(AuthContext);
+  const { user, userId, isLoading, logout } = useContext(AuthContext);
   const currentUserId = route.params?.userId || userId;
 
   const [profileData, setProfileData] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
 
@@ -30,7 +30,6 @@ const ProfileScreen = ({ route, navigation }) => {
   }, [currentUserId, isLoading]);
 
   const fetchProfileData = async () => {
-    setLoading(true);
     try {
       const profileRes = await getUserProfile(currentUserId);
       if (profileRes.data?.success) {
@@ -43,13 +42,12 @@ const ProfileScreen = ({ route, navigation }) => {
     } catch (err) {
       Alert.alert("Lỗi", "Không thể tải dữ liệu.");
     }
-    setLoading(false);
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchProfileData(); 
-    setRefreshing(false); 
+    await fetchProfileData();
+    setRefreshing(false);
   };
 
   const renderPostItem = ({ item }) => (
@@ -95,14 +93,6 @@ const ProfileScreen = ({ route, navigation }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   if (!profileData) {
     return (
       <View style={styles.loadingContainer}>
@@ -113,6 +103,18 @@ const ProfileScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Dropdown menu logout */}
+      <View style={styles.topRightMenu}>
+        <Menu>
+          <MenuTrigger>
+            <Icon name="ellipsis-v" size={22} color="#333" />
+          </MenuTrigger>
+          <MenuOptions>
+            <MenuOption onSelect={logout} text="Logout" />
+          </MenuOptions>
+        </Menu>
+      </View>
+
       <View style={styles.header}>
         <Image source={{ uri: profileData.profilePicture || 'https://via.placeholder.com/100' }} style={styles.avatar} />
         <View style={styles.statsContainer}>
@@ -132,11 +134,11 @@ const ProfileScreen = ({ route, navigation }) => {
       </View>
 
       <View style={styles.actionButtonContainer}>
-        {currentUserId === userId ? (
+        {currentUserId === userId && (
           <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("EditProfile")}>
             <Text style={styles.editProfileButtonText}>Edit Profile</Text>
           </TouchableOpacity>
-        ) : null}
+        )}
       </View>
 
       <View style={styles.infoContainer}>
@@ -147,13 +149,13 @@ const ProfileScreen = ({ route, navigation }) => {
 
       <View style={styles.tabBar}>
         <TouchableOpacity style={styles.tabItem} onPress={() => setActiveTab("posts")}>
-          <Icon name="th" size={24} color={activeTab === "posts" ? "#000" : "#888"} />
+          <Icon name="th" size={24} color={activeTab === "posts" ? "#e91e63" : "#aaa"} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem} onPress={() => setActiveTab("saved")}>
-          <Icon name="bookmark-o" size={24} color={activeTab === "saved" ? "#000" : "#888"} />
+          <Icon name="bookmark-o" size={24} color={activeTab === "saved" ? "#e91e63" : "#aaa"} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem} onPress={() => setActiveTab("tagged")}>
-          <Icon name="user" size={24} color={activeTab === "tagged" ? "#000" : "#888"} />
+          <Icon name="user" size={24} color={activeTab === "tagged" ? "#e91e63" : "#aaa"} />
         </TouchableOpacity>
       </View>
 
@@ -162,29 +164,30 @@ const ProfileScreen = ({ route, navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: { flexDirection: 'row', padding: 16, alignItems: 'center' },
-  avatar: { width: 90, height: 90, borderRadius: 45, borderWidth: 1, borderColor: '#ccc' },
+  avatar: { width: 90, height: 90, borderRadius: 45, borderWidth: 2, borderColor: '#e91e63' },
   statsContainer: { flex: 1, marginLeft: 16, flexDirection: 'row', justifyContent: 'space-around' },
   stat: { alignItems: 'center' },
-  statNumber: { fontSize: 18, fontWeight: 'bold' },
+  statNumber: { fontSize: 18, fontWeight: 'bold', color: '#e91e63' },
   statLabel: { fontSize: 14, color: '#888' },
   actionButtonContainer: { paddingHorizontal: 16, marginBottom: 8, flexDirection: 'row', justifyContent: 'center' },
-  editProfileButton: { paddingVertical: 6, paddingHorizontal: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 },
-  editProfileButtonText: { fontWeight: '500', color: '#333' },
+  editProfileButton: { paddingVertical: 6, paddingHorizontal: 20, borderWidth: 1, borderColor: '#e91e63', borderRadius: 6 },
+  editProfileButtonText: { fontWeight: '600', color: '#e91e63' },
   infoContainer: { paddingHorizontal: 16, paddingBottom: 8 },
-  username: { fontSize: 16, fontWeight: 'bold' },
-  bio: { marginTop: 4, fontSize: 14, color: '#333' },
-  website: { marginTop: 4, fontSize: 14, color: '#00376b' },
-  tabBar: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#ddd', justifyContent: 'space-around', paddingVertical: 8 },
+  username: { fontSize: 18, fontWeight: 'bold', color: '#e91e63' },
+  bio: { marginTop: 4, fontSize: 14, color: '#555' },
+  website: { marginTop: 4, fontSize: 14, color: '#e91e63', textDecorationLine: 'underline' },
+  tabBar: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#eee', justifyContent: 'space-around', paddingVertical: 10 },
   tabItem: { alignItems: 'center', justifyContent: 'center' },
   postsContainer: { marginTop: 8 },
   postItem: { width: screenWidth / 3, height: screenWidth / 3 },
   postImage: { width: '100%', height: '100%' },
   placeholderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  placeholderText: { fontSize: 16, color: '#888' },
+  placeholderText: { fontSize: 16, color: '#aaa' },
+  topRightMenu: { position: 'absolute', top: 10, right: 16, zIndex: 999 },
 });
+
 export default ProfileScreen;

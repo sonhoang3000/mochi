@@ -20,28 +20,35 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator screenOptions={{ headerShown: false }}>
-    <Tab.Screen 
-      name="Home" 
-      component={HomeScreen} 
-      options={{ tabBarIcon: ({ color, size }) => (<Icon name="home" size={size} color={color} />) }} 
-    />
-    <Tab.Screen 
-      name="Suggested" 
-      component={SuggestedScreen} 
-      options={{ tabBarIcon: ({ color, size }) => (<Icon name="user-plus" size={size} color={color} />) }} 
-    />
-    <Tab.Screen 
-      name="Upload" 
-      component={UploadScreen} 
-      options={{ tabBarIcon: ({ color, size }) => (<Icon name="plus-square" size={size} color={color} />) }} 
-    />
-    <Tab.Screen 
-      name="Profile" 
-      component={ProfileScreen} 
-      options={{ tabBarIcon: ({ color, size }) => (<Icon name="user" size={size} color={color} />) }} 
-    />
-  </Tab.Navigator>
+  <Tab.Navigator
+  screenOptions={{
+    headerShown: false,
+    tabBarActiveTintColor: '#FF69B4', // Màu hồng (Hot Pink)
+    tabBarInactiveTintColor: 'gray',
+  }}
+>
+  <Tab.Screen 
+    name="Home" 
+    component={HomeScreen} 
+    options={{ tabBarIcon: ({ color, size }) => (<Icon name="home" size={size} color={color} />) }} 
+  />
+  <Tab.Screen 
+    name="Suggested" 
+    component={SuggestedScreen} 
+    options={{ tabBarIcon: ({ color, size }) => (<Icon name="user-plus" size={size} color={color} />) }} 
+  />
+  <Tab.Screen 
+    name="Upload" 
+    component={UploadScreen} 
+    options={{ tabBarIcon: ({ color, size }) => (<Icon name="plus-square" size={size} color={color} />) }} 
+  />
+  <Tab.Screen 
+    name="Profile" 
+    component={ProfileScreen} 
+    options={{ tabBarIcon: ({ color, size }) => (<Icon name="user" size={size} color={color} />) }} 
+  />
+</Tab.Navigator>
+
 );
 
 const AppNavigator = () => {

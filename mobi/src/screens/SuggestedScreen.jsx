@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { getSuggestedUsers, followOrUnfollow } from '../api/api';
 import { AuthContext } from '../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 const SuggestedUsersScreen = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -26,7 +27,7 @@ const SuggestedUsersScreen = () => {
   const fetchSuggested = async () => {
     try {
       const users = await getSuggestedUsers();
-      const usersWithFollowState = users.map(userItem => ({
+      const usersWithFollowState = (users || []).map(userItem => ({
         ...userItem,
         isFollowing: user?.following?.includes(userItem._id),
       }));
@@ -55,28 +56,22 @@ const SuggestedUsersScreen = () => {
   const handleFollowUnfollow = async (targetUserId) => {
     try {
       const response = await followOrUnfollow(targetUserId, user._id);
-
       if (response.success) {
-        const updatedSuggested = suggestedUsers.map(item =>
+        Toast.show({ type: 'success', text1: response.message });
+
+        const updatedUsers = suggestedUsers.map((item) =>
           item._id === targetUserId
             ? { ...item, isFollowing: !item.isFollowing }
             : item
         );
-        const updatedFiltered = filteredUsers.map(item =>
+        setSuggestedUsers(updatedUsers);
+
+        const updatedFiltered = filteredUsers.map((item) =>
           item._id === targetUserId
             ? { ...item, isFollowing: !item.isFollowing }
             : item
         );
-
-        setSuggestedUsers(updatedSuggested);  
-        setFilteredUsers(updatedFiltered);    
-
-        const isNowFollowing = !user.following.includes(targetUserId);
-        const updatedFollowing = isNowFollowing
-          ? [...user.following, targetUserId]
-          : user.following.filter(id => id !== targetUserId);
-
-        setUser({ ...user, following: updatedFollowing });
+        setFilteredUsers(updatedFiltered);
       }
     } catch (error) {
       console.error('Follow/Unfollow Error:', error);
@@ -98,10 +93,15 @@ const SuggestedUsersScreen = () => {
         <Text style={styles.email}>{item.email}</Text>
       </View>
       <TouchableOpacity
-        style={[styles.followButton, item.isFollowing ? styles.unfollowBtn : styles.followBtn]}
-        onPress={() => handleFollowUnfollow(item._id)} 
+        style={[
+          styles.followButton,
+          item.isFollowing ? styles.unfollowBtn : styles.followBtn
+        ]}
+        onPress={() => handleFollowUnfollow(item._id)}
       >
-        <Text style={item.isFollowing ? styles.unfollowText : styles.followText}>
+        <Text
+          style={item.isFollowing ? styles.unfollowText : styles.followText}
+        >
           {item.isFollowing ? 'Unfollow' : 'Follow'}
         </Text>
       </TouchableOpacity>
@@ -110,13 +110,13 @@ const SuggestedUsersScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Suggested Users</Text>
+      <Text style={styles.title}>💖 Một nửa của bạn đang ở đây 💖</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Search by username or email..."
         value={searchQuery}
         onChangeText={handleSearch}
-        placeholderTextColor="#999"
+        placeholderTextColor="#c07b9b"
       />
       <FlatList
         data={filteredUsers}
@@ -137,7 +137,7 @@ const SuggestedUsersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#fff0f5', 
     paddingHorizontal: 16,
   },
   title: {
@@ -146,12 +146,12 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
     textAlign: 'center',
-    color: '#333',
+    color: '#d63384',
   },
   searchInput: {
     height: 45,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#f8c3d8',
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 12,
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
     elevation: 3,
+    color: '#d63384',
   },
   card: {
     flexDirection: 'row',
@@ -181,6 +182,8 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     marginRight: 16,
+    borderWidth: 2,
+    borderColor: '#f8c3d8',
   },
   userInfo: {
     flex: 1,
@@ -188,11 +191,11 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: '#b03060',
   },
   email: {
     fontSize: 14,
-    color: '#888',
+    color: '#a07090',
     marginTop: 4,
   },
   followButton: {
@@ -201,17 +204,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   followBtn: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#ff69b4', // Hồng đậm
   },
   unfollowBtn: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#ffe6f0', // Hồng nhạt
+    borderWidth: 1,
+    borderColor: '#ff69b4',
   },
   followText: {
     color: '#fff',
     fontWeight: '600',
   },
   unfollowText: {
-    color: '#333',
+    color: '#ff69b4',
     fontWeight: '600',
   },
   emptyText: {

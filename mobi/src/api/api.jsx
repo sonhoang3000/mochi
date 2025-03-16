@@ -1,9 +1,4 @@
 import axios from 'axios';
-<<<<<<< HEAD
-=======
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
 const API_BASE_URL = 'http://10.0.2.2:8000/api/v1';
 
 export const api = axios.create({
@@ -97,49 +92,25 @@ export const getAllCommentsOfPost = async (postId) => {
 
 export const getSuggestedUsers = async () => {
   try {
-    const response = await api.get('/user/suggested'); 
-    return response.data.users; 
+    const response = await api.get('/user/suggested');
+    const users = response.data?.users || [];
+    return users;
   } catch (error) {
     console.error('API getSuggestedUsers error:', error.response?.data || error.message);
-    throw error;
+    return []; 
   }
 };
 
-<<<<<<< HEAD
 
-=======
-// export const followOrUnfollowUser = async (targetUserId) => {
-//   try {
-//     const response = await api.post(`/followorunfollow/${targetUserId}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Follow/Unfollow error:", error.response?.data || error.message);
-//     throw error;
-//   }
-// };
-
-// export const followOrUnfollowUser = (userProfileId, currentUserId) => {
-// 	return axios.post(`/user/followorunfollow/${userProfileId}`, currentUserId, { withCredentials: true })
-// }
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
-export const followOrUnfollowUser = async (targetUserId) => {
+export const followOrUnfollow = async (targetUserId, currentUserId) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/followorunfollow/${targetUserId}`,
-<<<<<<< HEAD
-      {}, 
-=======
-      {}, // Nếu API yêu cầu body, hãy thêm dữ liệu vào đây
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
-      { withCredentials: true }
-    );
+    const response = await api.post(`/user/followorunfollow/${targetUserId}`, currentUserId, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error("Follow/Unfollow error:", error.response?.data || error.message);
     throw error;
   }
 };
-
 
 export const getFollowing = async (userId) => {
   try {
@@ -161,7 +132,6 @@ export const getFollowers = async (userId) => {
   }
 };
 
-<<<<<<< HEAD
 export const getAllMessages = async (userId) => {
   try {
     const response = await api.get(`/message/all/${userId}`);
@@ -181,39 +151,13 @@ export const sendMessage = async (receiverId, data) => {
     return { success: false };
   }
 };
-=======
 
-// Gửi tin nhắn
-export const sendMessage = async (senderId, receiverId, message) => {
+export const getConversationService = async () => {
   try {
-    const response = await api.post('/messages/send', { senderId, receiverId, message });
-    return response.data;
+    const res = await api.get("/user/getconversation")
+    return res.data;
   } catch (error) {
-    console.error('Send message error:', error.response?.data || error.message);
-    throw error;
+    console.error(" Lỗi khi gửi tin nhắn:", error.response?.data || error.message);
+    return { success: false };
   }
 };
-
-// Lấy tin nhắn giữa hai người dùng
-export const getMessages = async (userId1, userId2) => {
-  try {
-    const response = await api.get(`/messages/${userId1}/${userId2}`);
-    return response.data;
-  } catch (error) {
-    console.error('Get messages error:', error.response?.data || error.message);
-    throw error;
-  }
-};
-
-// Lắng nghe tin nhắn mới
-export const listenForMessages = (callback) => {
-  socket.on('newMessage', (message) => {
-    callback(message);
-  });
-};
-
-// Ngắt kết nối socket khi không dùng nữa
-export const disconnectSocket = () => {
-  socket.disconnect();
-};
->>>>>>> df9ec8a9ba23c0b60431a68985ec86aebba9973a
