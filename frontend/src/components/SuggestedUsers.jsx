@@ -4,15 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { followOrUnfollow } from "@/services/userService"
 import { toast } from "sonner"
 import { setAuthUser } from "@/redux/authSlice";
-import { useState } from "react"
 
 const SuggestedUsers = () => {
 	const dispatch = useDispatch();
 	const { suggestedUsers, user } = useSelector(store => store.auth)
 	const followingArray = Array.isArray(user?.following) ? user?.following : [];
-
-	const [page, setPage] = useState(1);
-	const [loading, setLoading] = useState(false);
 
 	const { type } = useParams();
 	const isExplorePage = type === "user";

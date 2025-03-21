@@ -1,10 +1,11 @@
 import { Story } from "../models/story.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
-import { Comment } from "../models/comment.model.js"; 
+import { Comment } from "../models/comment.model.js";
 
 export const addStory = async (req, res) => {
   try {
+    console.log('check add story')
     const { caption } = req.body;
     const file = req.file;
     const authorId = req.id;
@@ -14,8 +15,8 @@ export const addStory = async (req, res) => {
     let typeContent = file.mimetype.startsWith("image/")
       ? "image"
       : file.mimetype.startsWith("video/")
-      ? "video"
-      : null;
+        ? "video"
+        : null;
 
     if (!typeContent) {
       return res.status(400).json({ message: "Invalid file type" });
@@ -79,8 +80,7 @@ export const getFollowStories = async (req, res) => {
     const currentId = req.id;
 
     const currentUser = await User.findById(currentId).select("following");
-
-    const followedUserIds = [...currentUser.following, currentId];
+    const followedUserIds = currentUser.following;
 
     const stories = await Story.find({ author: { $in: followedUserIds } })
       .sort({ createdAt: -1 })
@@ -107,7 +107,6 @@ export const getFollowStories = async (req, res) => {
   }
 };
 
-
 // View story
 export const viewStory = async (req, res) => {
   try {
@@ -131,7 +130,7 @@ export const viewStory = async (req, res) => {
 };
 
 // Like / Unlike Story
-export const likeStory = async (req, res) => {
+export const likeOrDislikeStory = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.id;
@@ -143,11 +142,11 @@ export const likeStory = async (req, res) => {
     if (alreadyLiked) {
       story.likes = story.likes.filter(like => like.toString() !== userId.toString());
       await story.save();
-      return res.status(200).json({ message: "Unliked the story" });
+      return res.status(200).json({ success: true, message: "Unliked the story" });
     } else {
       story.likes.push(userId);
       await story.save();
-      return res.status(200).json({ message: "Liked the story" });
+      return res.status(200).json({ success: true, message: "Liked the story" });
     }
   } catch (error) {
     console.error(" Error in likeStory:", error.message);
@@ -168,7 +167,7 @@ export const commentOnStory = async (req, res) => {
     const comment = new Comment({
       text,
       author: userId,
-      story: id  
+      story: id
     });
 
     await comment.save();
@@ -187,7 +186,7 @@ export const getStoryComments = async (req, res) => {
   try {
     const { id } = req.params;
     const comments = await Comment.find({ story: id })
-      .populate('author', 'profilePicture ')
+      .populate('author', 'username profilePicture ')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ comments });
@@ -254,7 +253,7 @@ export const deleteStoryComment = async (req, res) => {
     if (!story) return res.status(404).json({ message: "Story not found" });
 
     if (comment.author.toString() !== userId.toString() &&
-        story.author.toString() !== userId.toString()) {
+      story.author.toString() !== userId.toString()) {
       return res.status(403).json({ message: "Not authorized to delete this comment" });
     }
 

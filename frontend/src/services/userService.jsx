@@ -40,8 +40,8 @@ const editProfile = (formData) => {
 	return axios.post(`/api/v1/user/profile/edit`, formData, { withCredentials: true })
 }
 
-const followOrUnfollow = (userProfileId, currentUserId) => {
-	return axios.post(`/api/v1/user/followorunfollow/${userProfileId}`, currentUserId, { withCredentials: true })
+const followOrUnfollow = (targegtUserId, currentUserId) => {
+	return axios.post(`/api/v1/user/followorunfollow/${targegtUserId}`, currentUserId, { withCredentials: true })
 }
 
 const searchUser = (username, lastId = null) => {

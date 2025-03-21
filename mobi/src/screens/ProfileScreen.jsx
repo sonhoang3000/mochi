@@ -116,7 +116,13 @@ const ProfileScreen = ({ route, navigation }) => {
       </View>
 
       <View style={styles.header}>
-        <Image source={{ uri: profileData.profilePicture || 'https://via.placeholder.com/100' }} style={styles.avatar} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("StoryScreen")}
+        >
+          <Image
+            source={{ uri: profileData.profilePicture || 'https://via.placeholder.com/100' }}
+            style={styles.avatar} />
+        </TouchableOpacity>
         <View style={styles.statsContainer}>
           <View style={styles.stat}>
             <Text style={styles.statNumber}>{posts.length}</Text>
@@ -160,6 +166,7 @@ const ProfileScreen = ({ route, navigation }) => {
       </View>
 
       {renderContent()}
+
     </View>
   );
 };

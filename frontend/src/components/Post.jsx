@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
+import { Link } from "react-router-dom"
 const Post = ({ post }) => {
 	const [text, setText] = useState("")
 	const [open, setOpen] = useState(false)
@@ -107,9 +108,12 @@ const Post = ({ post }) => {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Avatar>
-						<AvatarImage src={post.author?.profilePicture} alt="post_image" />
-						<AvatarFallback>CN</AvatarFallback>
+						<Link to={`/profile/${post?.author?._id}`} >
+							<AvatarImage src={post.author?.profilePicture} alt="post_image" />
+							<AvatarFallback>CN</AvatarFallback>
+						</Link>
 					</Avatar>
+
 					<div className="flex items-center gap-3">
 						<h1>{post.author?.username}</h1>
 						{user?._id === post.author?._id && <Badge variant="secondary" >Author</Badge>}

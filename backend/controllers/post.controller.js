@@ -4,6 +4,9 @@ import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
+// import axios from 'axios';
+// import multer from "multer";
+// import FormData from "form-data";
 
 export const addNewPost = async (req, res) => {
 	try {
@@ -31,6 +34,39 @@ export const addNewPost = async (req, res) => {
 			resource_type: "auto",
 		});
 
+		// // 3. Gửi dữ liệu file tới Flask API để phân loại nội dung
+		// let predictedClass;
+
+		// try {
+		// 	const formData = new FormData();
+		// 	formData.append("file", file.buffer, file.originalname);
+
+		// 	const flaskResponse = await axios.post(
+		// 		`${process.env.PYTHON_URL}/predict`,
+		// 		formData,
+		// 		{
+		// 			headers: formData.getHeaders(),
+		// 		}
+		// 	);
+
+		// 	predictedClass = flaskResponse.data?.class;
+
+		// 	// 4. Từ chối nội dung nếu là 'porn'
+		// 	if (predictedClass === "porn") {
+		// 		return res.status(500).json({
+		// 			message: "Content is not allowed",
+		// 			content: "porn",
+		// 			success: false,
+		// 		});
+		// 	}
+		// } catch (error) {
+		// 	console.error("Flask API error:", error);
+		// 	return res.status(500).json({
+		// 		message: "Failed to connect to classification service",
+		// 		success: false,
+		// 	});
+		// }
+
 		const post = await Post.create({
 			caption,
 			src: cloudResponse.secure_url,
@@ -53,9 +89,27 @@ export const addNewPost = async (req, res) => {
 		})
 
 	} catch (error) {
-		console.log(error);
+		console.error("Unexpected error:", error);
+		return res.status(500).json({
+			message: "Internal server error",
+			success: false,
+		});
 	}
-}
+};
+
+// Cấu hình multer để lưu trữ trong bộ nhớ tạm
+// const upload = multer({
+// 	storage: multer.memoryStorage(),
+// 	limits: { fileSize: 5 * 1024 * 1024 }, // Giới hạn 5MB
+// 	fileFilter: (req, file, cb) => {
+// 		if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+// 			cb(null, true);
+// 		} else {
+// 			cb(new Error("Invalid file type"), false);
+// 		}
+// 	},
+// });
+
 export const getAllPost = async (req, res) => {
 	try {
 		const posts = await Post.find().sort({ createdAt: -1 })

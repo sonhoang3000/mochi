@@ -97,10 +97,9 @@ export const getSuggestedUsers = async () => {
     return users;
   } catch (error) {
     console.error('API getSuggestedUsers error:', error.response?.data || error.message);
-    return []; 
+    return [];
   }
 };
-
 
 export const followOrUnfollow = async (targetUserId, currentUserId) => {
   try {

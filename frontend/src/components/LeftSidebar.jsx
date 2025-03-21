@@ -1,5 +1,8 @@
-import { setAuthUser } from '@/redux/authSlice'
+import { setAuthUser, setSuggestedUsers, setUserProfile, setSelectedUser, setGetConversation } from '@/redux/authSlice'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
+import { setOnlineUsers, setMessages } from '@/redux/chatSlice'
+import { clearLikeNotification } from '@/redux/rtnSlice'
+import { setSocket } from '@/redux/socketSlice'
 import { logoutUser } from '@/services/userService'
 import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, AlignJustify } from 'lucide-react'
 import { useState } from 'react'
@@ -22,9 +25,27 @@ const LeftSidebar = () => {
 		try {
 			const res = await logoutUser()
 			if (res.success) {
+				//user
 				dispatch(setAuthUser(null))
+				dispatch(setSuggestedUsers([]))
+				dispatch(setUserProfile(null))
+				dispatch(setSelectedUser(null))
+				dispatch(setGetConversation([]))
+
+				//post
 				dispatch(setSelectedPost(null))
 				dispatch(setPosts([]))
+
+				//chat
+				dispatch(setOnlineUsers([]))
+				dispatch(setMessages([]))
+
+				//RealTimeNotification
+				dispatch(clearLikeNotification())
+
+				//socket
+				dispatch(setSocket(null))
+
 				nagivate("/login")
 				toast.success(res.message)
 			}

@@ -137,7 +137,7 @@ const SuggestedUsersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff0f5', 
+    backgroundColor: '#fff0f5',
     paddingHorizontal: 16,
   },
   title: {

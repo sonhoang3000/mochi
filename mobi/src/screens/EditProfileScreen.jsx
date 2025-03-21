@@ -59,6 +59,7 @@ const EditProfileScreen = () => {
     try {
       setLoading(true);
       const res = await editProfile(formData);
+      console.log('check')
 
       if (res.success) {
         updateUser(res.user);
@@ -86,8 +87,8 @@ const EditProfileScreen = () => {
             imageUri
               ? { uri: imageUri }
               : user?.profilePicture
-              ? { uri: user.profilePicture }
-              : null
+                ? { uri: user.profilePicture }
+                : null
           }
           style={styles.avatar}
         />
