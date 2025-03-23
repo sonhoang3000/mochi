@@ -16,7 +16,7 @@ import FollowersScreen from '../screens/FollowersScreen';
 import FollowingScreen from '../screens/FollowingScreen';
 import MessageListScreen from '../screens/MessageListScreen';
 import ChatScreen from '../screens/ChatScreen';
-import StoryScreen from '../screens/StoryScreen';
+import StoryProfile from '../screens/StoryProfile';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -67,7 +67,7 @@ const AppNavigator = () => {
         <Stack.Screen name="FollowingScreen" component={FollowingScreen} options={{ headerShown: false, gestureEnabled: true, }} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false, gestureEnabled: true, }} />
         <Stack.Screen name="Messageslist" component={MessageListScreen} options={{ headerShown: false, gestureEnabled: true, }} />
-        <Stack.Screen name="StoryScreen" component={StoryScreen} options={{ headerShown: false, gestureEnabled: true, }} />
+        <Stack.Screen name="StoryProfile" component={StoryProfile} options={{ headerShown: false, gestureEnabled: true, }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

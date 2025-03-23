@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { FlatList, Image, View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
 import { AuthContext } from '../context/AuthContext';
 import * as ImagePicker from 'expo-image-picker';
@@ -8,6 +8,7 @@ import { Animated } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import CommentModal from './CommentModal';
 
 const HomeStory = () => {
 	const { user, userId } = useContext(AuthContext);
@@ -18,22 +19,27 @@ const HomeStory = () => {
 	const [selectedStory, setSelectedStory] = useState(null);
 	const navigation = useNavigation();
 	const [liked, setLiked] = useState(false);
-	const [comment, setComment] = useState("");
-	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [comment, setComment] = useState('');
 
-	// Hàm mở/đóng modal
-	const toggleModal = () => {
-		setIsModalVisible(!isModalVisible);
-	};
+	const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
 
 	const scale = useRef(new Animated.Value(1)).current;
 
-	const animateLike = () => {
+	const animateLike = useCallback(() => {
 		Animated.sequence([
-			Animated.timing(scale, { toValue: 1.5, duration: 150, useNativeDriver: true }),
-			Animated.timing(scale, { toValue: 1, duration: 150, useNativeDriver: true }),
+			Animated.timing(scale, {
+				toValue: 1.5,
+				duration: 150,
+				useNativeDriver: true,
+			}),
+			Animated.timing(scale, {
+				toValue: 1,
+				duration: 150,
+				useNativeDriver: true,
+			}),
 		]).start();
-	};
+	}, []);
+
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -212,7 +218,7 @@ const HomeStory = () => {
 					<View style={styles.headerStory}>
 						<View style={styles.userInfo}>
 							<TouchableOpacity >
-								<TouchableOpacity onPress={() => navigation.navigate("StoryScreen")}>
+								<TouchableOpacity onPress={() => navigation.navigate("StoryProfile")}>
 									<Image
 										style={styles.storyImage}
 										source={user.profilePicture ? { uri: user.profilePicture } : require('../assets/R.jpg')}
@@ -259,17 +265,16 @@ const HomeStory = () => {
 								{selectedStory && (
 									<TouchableWithoutFeedback onPress={() => setSelectedStory(null)}>
 										<View style={styles.modalContainer}>
-											{/* <TouchableOpacity onPress={() => setSelectedStory(null)}> */}
-											<Ionicons
-												style={styles.iconBackModal}
-												name="chevron-back"
-												size={30}
-												color="#fff"
-											/>
-											{/* </TouchableOpacity> */}
+											<TouchableOpacity onPress={() => setSelectedStory(null)}>
+												<Ionicons
+													style={styles.iconBackModal}
+													name="chevron-back"
+													size={30}
+													color="#fff"
+												/>
+											</TouchableOpacity>
 
-
-											<TouchableWithoutFeedback>
+											<TouchableWithoutFeedback onPress={() => setSelectedStory(null)}>
 												<View style={styles.headerModal}>
 													<Image
 														source={selectedStory.author?.profilePicture ? { uri: selectedStory.author?.profilePicture } : require("../assets/R.jpg")}
@@ -313,10 +318,19 @@ const HomeStory = () => {
 													</Animated.View>
 												</TouchableOpacity>
 
-												{/* Nút Comment */}
-												<TouchableOpacity >
-													<Ionicons name="chatbubble-outline" size={35} color="#fff" />
-												</TouchableOpacity>
+												<View>
+													{/* Nút mở CommentModal */}
+													<TouchableOpacity onPress={() => setIsCommentModalVisible(true)}>
+														<Ionicons name="chatbubble-outline" size={35} color="#fff" />
+													</TouchableOpacity>
+
+													<CommentModal
+														visible={isCommentModalVisible}
+														onClose={() => setIsCommentModalVisible(false)}
+														selectedStoryId={selectedStory._id}
+													/>
+												</View>
+
 
 											</View>
 
@@ -366,15 +380,16 @@ const styles = StyleSheet.create({
 	modalContainer: { flex: 1, backgroundColor: 'pink', justifyContent: 'center', alignItems: 'center', },
 	fullScreenImage: { width: '90%', height: '90%', resizeMode: 'contain', },
 	// Modal
-	iconBackModal: { position: 'absolute', top: 10, left: 10 },
+	iconBackModal: { position: 'absolute', left: -200, top: -10 },
 	headerModal: { position: 'absolute', top: 50, left: 20, flexDirection: 'row', alignItems: 'center' },
 	avatarModal: { width: 50, height: 50, borderRadius: 30, marginRight: 10, fontSize: 40 },
 	usernameModal: { alignItems: "center", color: '#fff', fontSize: 20, fontWeight: 'bold' },
-	commentModalContainer: { flexDirection: 'row', alignItems: 'center', width: "100%", },
+	commentModalContainer: { flexDirection: 'row', alignItems: 'center', width: "100%" },
 	likeCount: { color: '#fff', fontSize: 16, marginLeft: 5, marginRight: 15 },
 	iconHeart: { marginHorizontal: '4' },
 	commentInputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.7)', borderRadius: 20, paddingHorizontal: 5, paddingVertical: 5, marginHorizontal: 5 },
 	commentInput: { width: "77%", color: '#fff', fontSize: 16, paddingVertical: 5, paddingHorizontal: 8 },
+
 });
 
 export default HomeStory

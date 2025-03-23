@@ -117,7 +117,7 @@ const ProfileScreen = ({ route, navigation }) => {
 
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("StoryScreen")}
+          onPress={() => navigation.navigate("StoryProfile")}
         >
           <Image
             source={{ uri: profileData.profilePicture || 'https://via.placeholder.com/100' }}

@@ -4,9 +4,9 @@ import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
-// import axios from 'axios';
-// import multer from "multer";
-// import FormData from "form-data";
+import axios from 'axios';
+import multer from "multer";
+import FormData from "form-data";
 
 export const addNewPost = async (req, res) => {
 	try {
@@ -17,6 +17,13 @@ export const addNewPost = async (req, res) => {
 		if (!file) return res.status(400).json({ message: 'file required' });
 
 		let typeContent;
+
+		if (!file || !file.buffer) {
+			return res.status(400).json({
+				message: "No file provided",
+				success: false
+			});
+		}
 
 		if (file.mimetype.startsWith("image/")) {
 			typeContent = "image";
@@ -29,43 +36,42 @@ export const addNewPost = async (req, res) => {
 		// buffer to data uri
 		const fileUri = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-
 		const cloudResponse = await cloudinary.uploader.upload(fileUri, {
 			resource_type: "auto",
 		});
 
-		// // 3. Gửi dữ liệu file tới Flask API để phân loại nội dung
-		// let predictedClass;
+		// 3. Gửi dữ liệu file tới Flask API để phân loại nội dung
+		let predictedClass;
 
-		// try {
-		// 	const formData = new FormData();
-		// 	formData.append("file", file.buffer, file.originalname);
+		try {
+			const formData = new FormData();
+			formData.append("file", file.buffer, file.originalname);
 
-		// 	const flaskResponse = await axios.post(
-		// 		`${process.env.PYTHON_URL}/predict`,
-		// 		formData,
-		// 		{
-		// 			headers: formData.getHeaders(),
-		// 		}
-		// 	);
+			const flaskResponse = await axios.post(
+				`${process.env.PYTHON_URL}/predict`,
+				formData,
+				{
+					headers: formData.getHeaders(),
+				}
+			);
 
-		// 	predictedClass = flaskResponse.data?.class;
+			predictedClass = flaskResponse.data?.class;
 
-		// 	// 4. Từ chối nội dung nếu là 'porn'
-		// 	if (predictedClass === "porn") {
-		// 		return res.status(500).json({
-		// 			message: "Content is not allowed",
-		// 			content: "porn",
-		// 			success: false,
-		// 		});
-		// 	}
-		// } catch (error) {
-		// 	console.error("Flask API error:", error);
-		// 	return res.status(500).json({
-		// 		message: "Failed to connect to classification service",
-		// 		success: false,
-		// 	});
-		// }
+			// 4. Từ chối nội dung nếu là 'porn'
+			if (predictedClass === "porn") {
+				return res.status(403).json({
+					message: "Content is not allowed",
+					content: "porn",
+					success: false,
+				});
+			}
+		} catch (error) {
+			console.error("Flask API error:", error);
+			return res.status(500).json({
+				message: "Failed to connect to classification service",
+				success: false,
+			});
+		}
 
 		const post = await Post.create({
 			caption,
@@ -98,17 +104,17 @@ export const addNewPost = async (req, res) => {
 };
 
 // Cấu hình multer để lưu trữ trong bộ nhớ tạm
-// const upload = multer({
-// 	storage: multer.memoryStorage(),
-// 	limits: { fileSize: 5 * 1024 * 1024 }, // Giới hạn 5MB
-// 	fileFilter: (req, file, cb) => {
-// 		if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
-// 			cb(null, true);
-// 		} else {
-// 			cb(new Error("Invalid file type"), false);
-// 		}
-// 	},
-// });
+const uploadImage = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 5 * 1024 * 1024 }, // Giới hạn 5MB
+	fileFilter: (req, file, cb) => {
+		if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+			cb(null, true);
+		} else {
+			cb(new Error("Invalid file type"), false);
+		}
+	},
+});
 
 export const getAllPost = async (req, res) => {
 	try {

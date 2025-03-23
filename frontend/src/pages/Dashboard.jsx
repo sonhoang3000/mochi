@@ -3,18 +3,22 @@ import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, Linear
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import Sidebar from './Sidebar';
+import { useSelector } from "react-redux";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const Dashboard = () => {
   const [userCount, setUserCount] = useState(0);
   const [postCount, setPostCount] = useState(0);
-  const [onlineUsers, setOnlineUsers] = useState(0);
+  const [onlineCount, setOnlineCount] = useState(0);
+  const { onlineUsers } = useSelector(store => store.chat)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [pieData, setPieData] = useState({});
   const [barData, setBarData] = useState({});
+
+  const { suggestedUsers } = useSelector(store => store.auth)
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -23,28 +27,31 @@ const Dashboard = () => {
         const response = await axios.get('http://localhost:8000/admin/dashboard');
         setUserCount(response.data.totalUsers);
         setPostCount(response.data.totalPosts);
-        setOnlineUsers(response.data.onlineUsers);
 
-        // Dữ liệu cho biểu đồ tròn
+        const onlineCount = suggestedUsers.filter(user => onlineUsers.includes(user._id)).length
+        setOnlineCount(onlineCount)
+
         setPieData({
-          labels: ['Người dùng', 'Bài viết', 'Người dùng online'],
+          labels: ['Users', 'Posts', 'Online Users'],
           datasets: [{
-            data: [response.data.totalUsers, response.data.totalPosts, response.data.onlineUsers],
-            backgroundColor: ['#36A2EB', '#FF6384', '#FFCD56'],
-            hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCD56'],
+            data: [response.data.totalUsers, response.data.totalPosts, onlineCount],
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCD56'], // xanh dương, hồng, vàng
+            hoverBackgroundColor: ['#1E88E5', '#F06292', '#FFD54F'], // xanh dương đậm, hồng đậm, vàng nhạt
           }]
         });
+
         setBarData({
-          labels: ['Người dùng', 'Bài viết', 'Người dùng online'],
+          labels: ['Users', 'Posts', 'Online Users'],
           datasets: [{
-            label: 'Số lượng',
-            data: [response.data.totalUsers, response.data.totalPosts, response.data.onlineUsers],
-            backgroundColor: '#4CAF50',
+            label: 'Count',
+            data: [response.data.totalUsers, response.data.totalPosts, onlineCount],
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCD56'], // đồng nhất với Pie Chart
           }]
         });
+
 
       } catch (error) {
-        setError(`Có lỗi xảy ra: ${error.message}`);
+        setError(`An error occurred: ${error.message}`);
         console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
@@ -55,43 +62,41 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-
       <div className="p-6 w-full">
-        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
 
-        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {error && <div className="text-red-500 mb-4 text-lg">{error}</div>}
 
         {loading ? (
-          <div className="text-center">Đang tải...</div>
+          <div className="text-center text-lg text-gray-600">Loading...</div>
         ) : (
-          <div>
-            <div className="mb-6">
-              <h3 className="text-xl mb-4">Biểu đồ tròn</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold mb-4 text-gray-700">Pie Chart</h3>
               <Pie data={pieData} />
-
             </div>
 
-            <div className="mb-6">
-              <h3 className="text-xl mb-4">Biểu đồ cột</h3>
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold mb-4 text-gray-700">Bar Chart</h3>
               <Bar data={barData} />
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
-              <div className="p-4 bg-blue-500 text-white rounded shadow-lg">
-                <h3 className="text-xl">Số lượng người dùng</h3>
-                <p className="text-3xl">{userCount}</p>
+            <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 bg-blue-500 text-white rounded-lg shadow-md text-center">
+                <h3 className="text-xl font-medium">Total Users</h3>
+                <p className="text-4xl font-bold mt-2">{userCount}</p>
               </div>
-              <div className="p-4 bg-green-500 text-white rounded shadow-lg">
-                <h3 className="text-xl">Số lượng bài viết</h3>
-                <p className="text-3xl">{postCount}</p>
+              <div className="p-6 bg-pink-500 text-white rounded-lg shadow-md text-center">
+                <h3 className="text-xl font-medium">Total Posts</h3>
+                <p className="text-4xl font-bold mt-2">{postCount}</p>
               </div>
-              <div className="p-4 bg-yellow-500 text-white rounded shadow-lg">
-                <h3 className="text-xl">Số người dùng online</h3>
-                <p className="text-3xl">{onlineUsers}</p>
+              <div className="p-6 bg-yellow-500 text-white rounded-lg shadow-md text-center">
+                <h3 className="text-xl font-medium">Online Users</h3>
+                <p className="text-4xl font-bold mt-2">{onlineCount}</p>
               </div>
             </div>
+
           </div>
         )}
       </div>

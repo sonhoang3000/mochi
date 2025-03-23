@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import mongoose from 'mongoose';
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
+import { Comment } from "../models/comment.model.js";
 
 const router = express.Router();
 
@@ -28,9 +29,7 @@ router.post("/admin/login", async (req, res) => {
 // Middleware để xác thực admin
 const authenticateAdmin = (req, res, next) => {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-
     if (!token) return res.status(401).json({ error: "Không có quyền truy cập" });
-
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
         req.admin = decoded;
@@ -53,7 +52,7 @@ router.get("/admin/profile", authenticateAdmin, async (req, res) => {
 // Lấy danh sách người dùng
 router.get("/users", async (req, res) => {
     try {
-        const { search = "", status, page = 1, limit = 10 } = req.query;
+        const { search = "", status, page = 1, limit = 20 } = req.query;
 
         let query = {};
 
@@ -86,13 +85,15 @@ router.get("/users", async (req, res) => {
 });
 
 // Xóa người dùng
-router.delete("/users/:id", async (req, res) => {
+router.delete("/delete/user/:id", async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
             return res.status(404).json({ error: "Người dùng không tồn tại" });
         }
-        res.json({ message: "Người dùng đã bị xóa" });
+        await Post.deleteMany({ author: user });
+
+        res.json({ success: true, message: "Người dùng đã bị xóa" });
     } catch (err) {
         res.status(500).json({ error: "Lỗi server" });
     }
@@ -122,10 +123,29 @@ router.get("/posts", async (req, res) => {
 
 
 // Xóa bài viết
-router.delete("/posts/:id", async (req, res) => {
+router.delete("/delete/post/:id", async (req, res) => {
     try {
-        await Post.findByIdAndDelete(req.params.id);
-        res.json({ message: "Bài viết đã bị xóa" });
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+
+        // console.log('check post', post.author)
+        const authorId = post.author
+        console.log('check post', authorId)
+
+        if (!post) return res.status(404).json({ message: 'Post not found', success: false });
+        await Post.findByIdAndDelete(postId);
+
+        let user = await User.findById(authorId);
+        user.posts = user.posts.filter(id => id.toString() !== postId);
+        await user.save();
+
+        await Comment.deleteMany({ post: postId });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Post deleted'
+        })
+
     } catch (err) {
         res.status(500).json({ error: "Lỗi server" });
     }

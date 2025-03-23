@@ -183,7 +183,7 @@ const HomeScreen = ({ navigation }) => {
 				{displayedComments.map((comment, index) => (
 					<View key={comment._id || `${item._id}-${index}`} style={styles.commentItem}>
 						<Text style={styles.commentText}>
-							<Text style={styles.commentUsername}>{comment.author.username}</Text>: {comment.text}
+							<Text style={styles.commentUsername}>{comment?.author?.username}</Text>: {comment.text}
 						</Text>
 					</View>
 				))}

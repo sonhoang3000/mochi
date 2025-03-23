@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import {
 	View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, TextInput, TouchableWithoutFeedback, SafeAreaView,
 } from 'react-native';
@@ -10,8 +10,9 @@ import { deleteStory, getUserStory, likeOrDislikeStory, commentOnStory } from '.
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
+import CommentModal from './CommentModal';
 
-const StoryScreen = () => {
+const StoryProfile = () => {
 	const [storyUser, setStoryUser] = useState([]);
 	const [comment, setComment] = useState("123");
 	const swiperRef = useRef(null);
@@ -21,14 +22,24 @@ const StoryScreen = () => {
 	const inputRefs = useRef(new Map());
 	const { userId } = useContext(AuthContext);
 
+	const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
+
 	const scale = useRef(new Animated.Value(1)).current;
 
-	const animateLike = () => {
+	const animateLike = useCallback(() => {
 		Animated.sequence([
-			Animated.timing(scale, { toValue: 1.5, duration: 150, useNativeDriver: true }),
-			Animated.timing(scale, { toValue: 1, duration: 150, useNativeDriver: true }),
+			Animated.timing(scale, {
+				toValue: 1.5,
+				duration: 150,
+				useNativeDriver: true,
+			}),
+			Animated.timing(scale, {
+				toValue: 1,
+				duration: 150,
+				useNativeDriver: true,
+			}),
 		]).start();
-	};
+	}, []);
 
 	useEffect(() => {
 		const fetchStory = async () => {
@@ -216,9 +227,15 @@ const StoryScreen = () => {
 									<Text style={styles.likeCount}>{story.likes.length || 0}</Text>
 
 									{/* Nút Comment */}
-									<TouchableOpacity onPress={() => focusInput(story._id)}>
+									<TouchableOpacity onPress={() => setIsCommentModalVisible(true)}>
 										<Ionicons name="chatbubble-outline" size={30} color="#fff" />
 									</TouchableOpacity>
+
+									<CommentModal
+										visible={isCommentModalVisible}
+										onClose={() => setIsCommentModalVisible(false)}
+										selectedStoryId={story._id}
+									/>
 
 									{/* Số lượng Comment */}
 									<Text style={styles.commentCount}>{story.comments.length || 0}</Text>
@@ -334,4 +351,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default StoryScreen;
+export default StoryProfile;

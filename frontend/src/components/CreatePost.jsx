@@ -45,6 +45,9 @@ const CreatePost = ({ open, setOpen }) => {
 			toast.error(error.response.data.message)
 		} finally {
 			setLoading(false)
+			setCaption("")
+			setFile("")
+			setFilePreview("")
 		}
 	}
 
