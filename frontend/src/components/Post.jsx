@@ -1,18 +1,18 @@
+import { setAuthUser } from '@/redux/authSlice'
 import { setPosts, setSelectedPost } from "@/redux/postSlice"
 import { addComment, bookmarkPost, deletePost, likeOrDislike } from "@/services/postService"
-import { Bookmark, MessageCircle, MoreHorizontal, Send,BookMarked } from "lucide-react"
+import { Bookmark, BookMarked, MessageCircle, MoreHorizontal, Send } from "lucide-react"
 import PropTypes from 'prop-types'
-import { useState,useEffect } from "react"
+import { useEffect, useState } from "react"
 import { FaHeart, FaRegHeart } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 import { toast } from "sonner"
 import CommentDialog from "./CommentDialog"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
-import { Link } from "react-router-dom"
-import { setAuthUser } from '@/redux/authSlice'
 
 const Post = ({ post }) => {
 	const [text, setText] = useState("")

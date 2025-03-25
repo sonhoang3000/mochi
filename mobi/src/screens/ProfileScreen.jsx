@@ -1,12 +1,19 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  View, Text, Image, FlatList, TouchableOpacity, StyleSheet,
-  Dimensions, Alert, RefreshControl
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getUserPosts, getUserProfile } from '../api/api';
 import { AuthContext } from '../context/AuthContext';
-import { getUserProfile, getUserPosts } from '../api/api';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -43,19 +50,16 @@ const ProfileScreen = ({ route, navigation }) => {
       Alert.alert("Lỗi", "Không thể tải dữ liệu.");
     }
   };
-
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchProfileData();
     setRefreshing(false);
   };
-
   const renderPostItem = ({ item }) => (
     <TouchableOpacity style={styles.postItem}>
       <Image source={{ uri: item.src }} style={styles.postImage} />
     </TouchableOpacity>
   );
-
   const renderContent = () => {
     const savedPosts = profileData?.bookmarks || [];
     if (activeTab === "posts") {
@@ -92,7 +96,6 @@ const ProfileScreen = ({ route, navigation }) => {
       );
     }
   };
-
   if (!profileData) {
     return (
       <View style={styles.loadingContainer}>
@@ -166,7 +169,6 @@ const ProfileScreen = ({ route, navigation }) => {
       </View>
 
       {renderContent()}
-
     </View>
   );
 };

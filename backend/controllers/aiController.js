@@ -17,9 +17,9 @@ export const askAI = async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer earer 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`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://mochi-ai.local", // hoặc local bạn đang dùng
+          "HTTP-Referer": "https://mochi-ai.local",
           "X-Title": "mochi-ai",
         },
       }
@@ -32,5 +32,21 @@ export const askAI = async (req, res) => {
     res
       .status(500)
       .json({ error: error?.response?.data || "AI service error." });
+  }
+};
+
+export const predictFakeNews = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ error: "Text is required" });
+    }
+
+    const response = await axios.post("http://localhost:5000/predict", { text });
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error connecting to Fake News AI:", error.message);
+    res.status(500).json({ error: "Fake News detection service error." });
   }
 };

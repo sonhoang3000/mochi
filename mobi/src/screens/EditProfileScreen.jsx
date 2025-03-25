@@ -1,19 +1,19 @@
+import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
   Text,
   TextInput,
-  Image,
   TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
 import Toast from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../context/AuthContext';
 import { editProfile } from '../api/api';
+import { useAuth } from '../context/AuthContext';
 
 const EditProfileScreen = () => {
   const navigation = useNavigation();

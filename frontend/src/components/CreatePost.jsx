@@ -1,15 +1,15 @@
+import { readFileAsDataURL } from "@/lib/utils"
+import { setPosts } from "@/redux/postSlice"
+import { addNewPost } from "@/services/postService"
+import { Loader2 } from "lucide-react"
+import PropTypes from 'prop-types'
 import { useRef, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { toast } from "sonner"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogHeader } from "./ui/dialog"
 import { Textarea } from "./ui/textarea"
-import { readFileAsDataURL } from "@/lib/utils"
-import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
-import { addNewPost } from "@/services/postService"
-import { useDispatch, useSelector } from "react-redux"
-import { setPosts } from "@/redux/postSlice"
-import PropTypes from 'prop-types';
 const CreatePost = ({ open, setOpen }) => {
 	const imageRef = useRef()
 	const [file, setFile] = useState("")

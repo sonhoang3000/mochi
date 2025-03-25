@@ -1,9 +1,9 @@
-import { useSelector, useDispatch } from "react-redux"
-import { Link, useParams } from "react-router-dom"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { setAuthUser } from "@/redux/authSlice"
 import { followOrUnfollow } from "@/services/userService"
+import { useDispatch, useSelector } from "react-redux"
+import { Link, useParams } from "react-router-dom"
 import { toast } from "sonner"
-import { setAuthUser } from "@/redux/authSlice";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
 const SuggestedUsers = () => {
 	const dispatch = useDispatch();

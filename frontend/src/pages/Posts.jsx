@@ -1,8 +1,8 @@
+import { deletePostService } from '@/services/adminService';
 import axios from 'axios';
+import { Trash2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
-import { Trash2Icon } from 'lucide-react'
-import { deletePostService } from '@/services/adminService';
 
 const AdminPosts = () => {
 	const [posts, setPosts] = useState([]);

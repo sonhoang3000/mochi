@@ -1,25 +1,25 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import HomeScreen from '../screens/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import UploadScreen from '../screens/UploadScreen';
-import EditProfileScreen from '../screens/EditProfileScreen';
 import AllCommentsScreen from '../screens/AllCommentsScreen';
-import SuggestedScreen from '../screens/SuggestedScreen';
+import ChatScreen from '../screens/ChatScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
+import Explore from '../screens/Explore';
 import FollowersScreen from '../screens/FollowersScreen';
 import FollowingScreen from '../screens/FollowingScreen';
+import HomeScreen from '../screens/HomeScreen';
+import LoginScreen from '../screens/LoginScreen';
 import MessageListScreen from '../screens/MessageListScreen';
-import ChatScreen from '../screens/ChatScreen';
-import StoryProfile from '../screens/StoryProfile';
-import Explore from '../screens/Explore';
-import PostDetail from '../screens/PostDetail';
 import NoticeScreen from '../screens/NoticeScreen';
+import PostDetail from '../screens/PostDetail';
+import ProfileScreen from '../screens/ProfileScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import StoryProfile from '../screens/StoryProfile';
+import SuggestedScreen from '../screens/SuggestedScreen';
+import UploadScreen from '../screens/UploadScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 

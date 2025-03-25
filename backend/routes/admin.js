@@ -2,9 +2,9 @@ import bcrypt from "bcryptjs";
 import express from "express";
 import jwt from "jsonwebtoken";
 import mongoose from 'mongoose';
+import { Comment } from "../models/comment.model.js";
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
-import { Comment } from "../models/comment.model.js";
 
 const router = express.Router();
 

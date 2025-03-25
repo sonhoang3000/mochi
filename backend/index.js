@@ -1,17 +1,17 @@
-import express from "express";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
+import { EventEmitter } from "events";
+import express from "express";
 import mongoose from "mongoose";
-import userRoute from "./routes/user.route.js";
-import postRoute from "./routes/post.route.js";
-import messageRoute from "./routes/message.route.js";
-import storyRoute from "./routes/story.route.js";
 import adminRoute from "./routes/admin.js";
 import aiRoutes from "./routes/aiRoutes.js";
-import notificationRoute from "./routes/notification.route.js"
+import messageRoute from "./routes/message.route.js";
+import notificationRoute from "./routes/notification.route.js";
+import postRoute from "./routes/post.route.js";
+import storyRoute from "./routes/story.route.js";
+import userRoute from "./routes/user.route.js";
 import { app, server } from "./socket/socket.js";
-import { EventEmitter } from "events";
 
 EventEmitter.defaultMaxListeners = 20;
 

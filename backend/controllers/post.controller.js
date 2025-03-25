@@ -1,13 +1,12 @@
-import sharp from "sharp";
-import cloudinary from "../utils/cloudinary.js";
-import { Post } from "../models/post.model.js";
-import { User } from "../models/user.model.js";
+import axios from 'axios';
+import FormData from "form-data";
+import multer from "multer";
 import { Comment } from "../models/comment.model.js";
 import { Notification } from '../models/notification.model.js';
+import { Post } from "../models/post.model.js";
+import { User } from "../models/user.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import axios from 'axios';
-import multer from "multer";
-import FormData from "form-data";
+import cloudinary from "../utils/cloudinary.js";
 
 export const addNewPost = async (req, res) => {
 	try {

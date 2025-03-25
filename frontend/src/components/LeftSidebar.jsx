@@ -1,21 +1,21 @@
-import { setAuthUser, setSuggestedUsers, setUserProfile, setSelectedUser, setGetConversation } from '@/redux/authSlice'
+import { setAuthUser, setGetConversation, setSelectedUser, setSuggestedUsers, setUserProfile } from '@/redux/authSlice'
+import { setMessages, setOnlineUsers } from '@/redux/chatSlice'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
-import { setOnlineUsers, setMessages } from '@/redux/chatSlice'
+import { setActionNotification } from '@/redux/rtnSlice'
 import { setSocket } from '@/redux/socketSlice'
+import { markAsRead } from "@/services/notificationService"
 import { logoutUser } from '@/services/userService'
-import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, AlignJustify } from 'lucide-react'
+import { AlignJustify, Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp } from 'lucide-react'
 import { useState } from 'react'
+import { FaRobot } from "react-icons/fa"
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import CreatePost from './CreatePost'
+import Notification from './Notification'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { FaRobot } from "react-icons/fa"; 
-import Notification from './Notification'
-import { setActionNotification } from '@/redux/rtnSlice'
-import { markAsRead } from "@/services/notificationService"
 
 const LeftSidebar = () => {
 	const nagivate = useNavigate()

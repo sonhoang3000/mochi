@@ -1,7 +1,7 @@
-import { Story } from "../models/story.model.js";
-import cloudinary from "../utils/cloudinary.js";
-import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
+import { Story } from "../models/story.model.js";
+import { User } from "../models/user.model.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const addStory = async (req, res) => {
   try {

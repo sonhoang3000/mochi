@@ -1,6 +1,10 @@
 import express from "express"
 import {
-      editProfile, followOrUnfollow, getProfile, getSuggestedUsers, login, logout, register, searchUser, getConversation, createConversation, getFollowers, getFollowing
+      createConversation,
+      editProfile, followOrUnfollow,
+      getConversation,
+      getFollowers, getFollowing,
+      getProfile, getSuggestedUsers, login, logout, register, searchUser
 } from "../controllers/user.controller.js"
 import isAuthenticated from "../middlewares/isAuthenticated.js"
 import upload from "../middlewares/multer.js"

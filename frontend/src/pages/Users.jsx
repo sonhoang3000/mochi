@@ -1,9 +1,9 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
-import { useSelector } from "react-redux";
-import { Trash2Icon } from 'lucide-react'
 import { deleteUserService } from '@/services/adminService';
+import axios from 'axios';
+import { Trash2Icon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useSelector } from "react-redux";
+import Sidebar from './Sidebar';
 
 const UserManagement = () => {
 	const [users, setUsers] = useState([]);

@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  View,
-  Text,
   FlatList,
   Image,
-  StyleSheet,
   RefreshControl,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { getSuggestedUsers, followOrUnfollow } from '../api/api';
-import { AuthContext } from '../context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { followOrUnfollow, getSuggestedUsers } from '../api/api';
+import { AuthContext } from '../context/AuthContext';
 
 const SuggestedUsersScreen = () => {
   const { user } = useContext(AuthContext);

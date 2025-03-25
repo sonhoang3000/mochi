@@ -1,11 +1,18 @@
 import express from "express";
-import isAuthenticated from "../middlewares/isAuthenticated.js";
 import multer from "multer";
 import {
   addStory,
+  commentOnStory,
+  deleteStory,
+  deleteStoryComment,
+  getFollowStories,
+  getStoryComments,
   getUserStory,
-  getFollowStories, viewStory, likeOrDislikeStory, commentOnStory, getStoryComments, deleteStory, updateStory, deleteStoryComment
+  likeOrDislikeStory,
+  updateStory,
+  viewStory
 } from "../controllers/story.controller.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage();

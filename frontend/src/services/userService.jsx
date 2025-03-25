@@ -65,7 +65,4 @@ const createConversationService = (targetId) => {
 	)
 }
 
-export {
-	registerUser, loginUser, logoutUser, getSuggestedUsers, getProfile, editProfile, followOrUnfollow,
-	searchUser, getConversationService, createConversationService
-}
+export { createConversationService, editProfile, followOrUnfollow, getConversationService, getProfile, getSuggestedUsers, loginUser, logoutUser, registerUser, searchUser }

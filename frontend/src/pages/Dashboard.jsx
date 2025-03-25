@@ -2,8 +2,8 @@ import axios from 'axios';
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
-import Sidebar from './Sidebar';
 import { useSelector } from "react-redux";
+import Sidebar from './Sidebar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 

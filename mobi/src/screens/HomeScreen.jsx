@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useContext, useEffect, useState } from 'react';
 import {
-	View,
-	Text,
-	Image,
-	FlatList,
-	TouchableOpacity,
-	TextInput,
-	StyleSheet,
 	Alert,
-	RefreshControl
+	FlatList,
+	Image,
+	RefreshControl,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Ionicons } from '@expo/vector-icons';
 import {
-	getAllPosts,
-	likePost,
-	dislikePost,
-	bookmarkPost,
 	addComment,
-	deletePost
+	bookmarkPost,
+	deletePost,
+	dislikePost,
+	getAllPosts,
+	likePost
 } from '../api/api';
 import { AuthContext } from '../context/AuthContext';
 import { PostContext } from '../context/PostContext';
-import HomeStory from '../screens/HomeStory'
+import HomeStory from '../screens/HomeStory';
 
 const HomeScreen = ({ navigation }) => {
 	const [commentText, setCommentText] = useState('');
