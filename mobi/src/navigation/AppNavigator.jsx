@@ -17,6 +17,9 @@ import FollowingScreen from '../screens/FollowingScreen';
 import MessageListScreen from '../screens/MessageListScreen';
 import ChatScreen from '../screens/ChatScreen';
 import StoryProfile from '../screens/StoryProfile';
+import Explore from '../screens/Explore';
+import PostDetail from '../screens/PostDetail';
+import NoticeScreen from '../screens/NoticeScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +47,11 @@ const TabNavigator = () => (
       options={{ tabBarIcon: ({ color, size }) => (<Icon name="plus-square" size={size} color={color} />) }}
     />
     <Tab.Screen
+      name="Explore"
+      component={Explore}
+      options={{ tabBarIcon: ({ color, size }) => (<Icon name="user" size={size} color={color} />) }}
+    />
+    <Tab.Screen
       name="Profile"
       component={ProfileScreen}
       options={{ tabBarIcon: ({ color, size }) => (<Icon name="user" size={size} color={color} />) }}
@@ -68,6 +76,8 @@ const AppNavigator = () => {
         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false, gestureEnabled: true, }} />
         <Stack.Screen name="Messageslist" component={MessageListScreen} options={{ headerShown: false, gestureEnabled: true, }} />
         <Stack.Screen name="StoryProfile" component={StoryProfile} options={{ headerShown: false, gestureEnabled: true, }} />
+        <Stack.Screen name="PostDetail" component={PostDetail} options={{ headerShown: false, gestureEnabled: true, }} />
+        <Stack.Screen name="NoticeScreen" component={NoticeScreen} options={{ headerShown: false, gestureEnabled: true, }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

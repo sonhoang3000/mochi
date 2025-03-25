@@ -3,17 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const rtnSlice = createSlice({
 	name: "realTimeNotification",
 	initialState: {
-		likeNotification: [],
-		commentNotification: [],
+		actionNotification: [],
 	},
 	reducers: {
-		setLikeNotification: (state, action) => {
-            state.likeNotification = action.payload
+		setActionNotification: (state, action) => {
+            state.actionNotification = action.payload
         },
-        setCommentNotification: (state, action) => {
-            state.commentNotification = action.payload
+		addActionNotification: (state, action) => {
+            state.actionNotification = [...state.actionNotification, action.payload];
         }
 	}
 })
-export const { setLikeNotification, setCommentNotification } = rtnSlice.actions
+export const { setActionNotification, addActionNotification } = rtnSlice.actions
 export default rtnSlice.reducer

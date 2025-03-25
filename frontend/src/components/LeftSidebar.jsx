@@ -1,7 +1,6 @@
 import { setAuthUser, setSuggestedUsers, setUserProfile, setSelectedUser, setGetConversation } from '@/redux/authSlice'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { setOnlineUsers, setMessages } from '@/redux/chatSlice'
-// import { clearLikeNotification } from '@/redux/rtnSlice'
 import { setSocket } from '@/redux/socketSlice'
 import { logoutUser } from '@/services/userService'
 import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, AlignJustify } from 'lucide-react'
@@ -15,10 +14,13 @@ import { Button } from './ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { FaRobot } from "react-icons/fa"; 
 import Notification from './Notification'
+import { setActionNotification } from '@/redux/rtnSlice'
+import { markAsRead } from "@/services/notificationService"
+
 const LeftSidebar = () => {
 	const nagivate = useNavigate()
 	const { user } = useSelector(store => store.auth)
-	const { likeNotification } = useSelector(store => store.realTimeNotification)
+	const { actionNotification } = useSelector(store => store.realTimeNotification)
 	const dispatch = useDispatch()
 	const [open, setOpen] = useState(false)
 	const [openNotification, setOpenNotification] = useState(false)
@@ -42,7 +44,7 @@ const LeftSidebar = () => {
 				dispatch(setMessages([]))
 
 				//RealTimeNotification
-				// dispatch(clearLikeNotification())
+				dispatch(setActionNotification([]))
 
 				//socket
 				dispatch(setSocket(null))
@@ -100,6 +102,23 @@ const LeftSidebar = () => {
 	if (location.pathname.startsWith("/admin")) {
 		return null
 	}
+
+	const handleMarkAllAsRead = async () => {
+		try {
+			// Assuming markAsReadAll is a service function that marks all notifications as read in the database
+			await Promise.all(actionNotification.map(notification => markAsRead(notification._id)));
+	
+			const updatedNotifications = actionNotification.map(notification => ({
+				...notification,
+				isRead: true
+			}));
+	
+			dispatch(setActionNotification(updatedNotifications));
+		} catch (error) {
+			console.error("Error marking all notifications as read:", error);
+		}
+	};
+
 	return (
 		<div className='fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen'>
 			<div className='flex flex-col'>
@@ -112,29 +131,32 @@ const LeftSidebar = () => {
 									{item.icon}
 									<span>{item.text}</span>
 									{
-										item.text === 'Notifications' && likeNotification.length > 0 && (
+										item.text === 'Notifications' && actionNotification.length > 0 && (
 											<Popover>
-												<PopoverTrigger asChild >
-													<Button className="rounded-full h-5 w-5 absolute bg-red-600 hover:bg-red-600 bottom-6 left-6" size='icon'>{likeNotification.length}</Button>
+												<PopoverTrigger asChild>
+													<Button 
+														className="rounded-full h-5 w-5 absolute bg-red-600 hover:bg-red-600 bottom-6 left-6"
+														size='icon'
+														onClick={handleMarkAllAsRead}
+													>
+														{actionNotification.filter(notification => !notification.isRead).length}
+													</Button>
 												</PopoverTrigger>
 												<PopoverContent>
 													<div>
-														{
-															likeNotification.length === 0 ? (<p>No new notification</p>) : (
-																likeNotification.map((notification) => {
-																	return (
-																		<div key={notification.userId} className='flex items-center gap-2 my-2' >
-																			<Avatar>
-																				<AvatarImage src={notification.userDetails?.profilePicture} />
-																				<AvatarFallback>CN</AvatarFallback>
-																			</Avatar>
-																			<p className='text-sm'><span className='font-bold' >{notification.userDetails?.username} </span>liked your post</p>
-
-																		</div>
-																	)
-																})
-															)
-														}
+														{actionNotification
+															.filter(notification => !notification.isRead)
+															.map(notification => (
+																<div key={notification._id} className='flex items-center gap-2 my-2'>
+																	<Avatar>
+																		<AvatarImage src={notification.senderId.profilePicture} />
+																		<AvatarFallback>CN</AvatarFallback>
+																	</Avatar>
+																	<p className='text-sm'>
+																		<span className='text-gray-600'>{notification.message}</span>
+																	</p>
+																</div>
+															))}
 													</div>
 												</PopoverContent>
 											</Popover>

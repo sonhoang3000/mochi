@@ -1,8 +1,8 @@
 import { setPosts, setSelectedPost } from "@/redux/postSlice"
 import { addComment, bookmarkPost, deletePost, likeOrDislike } from "@/services/postService"
-import { Bookmark, MessageCircle, MoreHorizontal, Send } from "lucide-react"
+import { Bookmark, MessageCircle, MoreHorizontal, Send,BookMarked } from "lucide-react"
 import PropTypes from 'prop-types'
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { FaHeart, FaRegHeart } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "sonner"
@@ -12,6 +12,8 @@ import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
 import { Link } from "react-router-dom"
+import { setAuthUser } from '@/redux/authSlice'
+
 const Post = ({ post }) => {
 	const [text, setText] = useState("")
 	const [open, setOpen] = useState(false)
@@ -22,6 +24,16 @@ const Post = ({ post }) => {
 	const [comment, setComment] = useState(post.comments)
 	const dispatch = useDispatch()
 	const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(user?.bookmarks?.includes(post?._id) || false);
+
+	useEffect(() => {
+        if (post && user) {
+            setIsBookmarked(user.bookmarks?.includes(post._id) || false);
+            setLiked(post.likes?.includes(user?._id) || false);
+            setPostLike(post.likes?.length || 0);
+            setComment(post.comments || []);
+        }
+    }, [post, user?._id]);
 
 	const changeEventHandler = (e) => {
 		const inputText = e.target.value
@@ -94,14 +106,25 @@ const Post = ({ post }) => {
 	}
 
 	const bookmarkHandler = async () => {
-		try {
-			const res = await bookmarkPost(post?._id)
-			if (res.success) {
-				toast.success(res.message)
-			}
-		} catch (error) {
-			console.log(error)
-		}
+		if (!post?._id) return;
+
+        try {
+            const res = await bookmarkPost(post._id)
+            if (res.success) {
+				setIsBookmarked(!isBookmarked);
+                const updatedUser = {
+                    ...user,
+                    bookmarks: isBookmarked 
+                        ? user.bookmarks.filter(id => id !== post._id)
+                        : [...(user.bookmarks || []), post._id]
+                };
+                dispatch(setAuthUser(updatedUser));
+                toast.success(res.message)
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Có lỗi xảy ra khi bookmark bài viết")
+            console.log(error)
+        }
 	}
 	return (
 		<div className="my-8 w-full max-w-sm mx-auto">
@@ -165,7 +188,10 @@ const Post = ({ post }) => {
 					}} className="cursor-pointer hover:text-gray-600" />
 					<Send className="cursor-pointer hover:text-gray-600" />
 				</div>
-				<Bookmark onClick={bookmarkHandler} className="cursor-pointer hover:text-gray-600" />
+				{isBookmarked ? 
+                <BookMarked onClick={bookmarkHandler} className="cursor-pointer text-black" /> :
+                <Bookmark onClick={bookmarkHandler} className="cursor-pointer hover:text-gray-600" />
+            }
 			</div>
 			<span className="font-medium block mb-2">{postLike} likes</span>
 			<p>

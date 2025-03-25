@@ -1,7 +1,7 @@
 
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useEffect } from "react"
-import { setLikeNotification, setCommentNotification } from '@/redux/rtnSlice'
+import { setActionNotification } from '@/redux/rtnSlice'
 import { getAllNotificationsService } from '@/services/notificationService'
 
 const useGetAllNotifications = () => {
@@ -11,11 +11,9 @@ const useGetAllNotifications = () => {
 			try {
 				const res = await getAllNotificationsService()
 				if (res.success) {
-					const likeNotification = res.notifications.filter(notification => notification.type === 'like') || []
-					const commentNotification = res.notifications.filter(notification => notification.type === 'comment') || []
+					const actionNotification = res.notifications
 
-                    dispatch(setLikeNotification(likeNotification))
-                    dispatch(setCommentNotification(commentNotification))
+                    dispatch(setActionNotification(actionNotification))
 				}
 			} catch (error) {
 				console.log(error)

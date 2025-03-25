@@ -5,10 +5,10 @@ import { useState, useEffect } from "react";
 import CommentDialog from "./CommentDialog";
 import { setSelectedPost } from "@/redux/postSlice"
 import { markAsRead } from "@/services/notificationService"
-import { setLikeNotification, setCommentNotification } from "@/redux/rtnSlice"
+import { setActionNotification } from "@/redux/rtnSlice"
 
 const Notification = ({ open, setOpen }) => {
-    const { likeNotification, commentNotification } = useSelector(store => store.realTimeNotification)
+    const { actionNotification } = useSelector(store => store.realTimeNotification)
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
     const dispatch = useDispatch();
     
@@ -16,8 +16,7 @@ const Notification = ({ open, setOpen }) => {
         const markAllAsRead = async () => {
             if (open) {
                 const unreadNotifications = [
-                    ...(likeNotification || []),
-                    ...(commentNotification || [])
+                    ...(actionNotification || [])
                 ].filter(notification => !notification.isRead);
 
                 try {
@@ -27,8 +26,11 @@ const Notification = ({ open, setOpen }) => {
                         )
                     );
                     
-                    dispatch(setLikeNotification([]));
-                    dispatch(setCommentNotification([]));
+                    const updatedNotifications = actionNotification.map(notification => ({
+                        ...notification,
+                        isRead: true
+                    }));
+                    dispatch(setActionNotification(updatedNotifications));
                 } catch (error) {
                     console.error("Error marking notifications as read:", error);
                 }
@@ -41,7 +43,7 @@ const Notification = ({ open, setOpen }) => {
     const handlePostClick = (post) => {
         const postWithComments = {
             ...post,
-            comments: post.comments || []
+            // comments: post.comments || []
         };
         dispatch(setSelectedPost(postWithComments));
         setCommentDialogOpen(true);
@@ -54,8 +56,8 @@ const Notification = ({ open, setOpen }) => {
                     <DialogHeader>
                         <DialogTitle>Notification</DialogTitle>
                     </DialogHeader>
-                    <div>
-                        {Array.isArray(likeNotification) && likeNotification.map(notification => (
+                    <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                        {Array.isArray(actionNotification) && actionNotification.map(notification => (
                             <div key={notification._id} className="flex items-center gap-3 p-3 border-b hover:bg-gray-50">
                                 {/* Avatar của người gửi */}
                                 <div className="w-10 h-10 rounded-full overflow-hidden">
@@ -63,47 +65,6 @@ const Notification = ({ open, setOpen }) => {
                                         src={notification.senderId.profilePicture || "../assets/avatar.jpg"}
                                         alt={notification.senderId.username}
                                         className="w-full h-full object-cover "
-                                    />
-                                </div>
-
-                                {/* Thông tin notification */}
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                        {/* <span className="font-semibold">{notification.senderId.username}</span> */}
-                                        <span className="text-gray-600">{notification.message}</span>
-                                    </div>
-
-                                    {/* Thời gian */}
-                                    <div className="text-sm text-gray-500">
-                                        {new Date(notification.createdAt).toLocaleString()}
-                                    </div>
-                                </div>
-
-                                {/* Preview ảnh bài post */}
-                                <div className="w-12 h-12 rounded overflow-hidden">
-                                    <img
-                                        src={notification.postId.src}
-                                        alt={notification.postId.caption}
-                                        className="w-full h-full object-cover cursor-pointer"
-                                        onClick={() => handlePostClick(notification.postId)}
-                                    />
-                                </div>
-
-                                {/* Indicator cho notification chưa đọc */}
-                                {!notification.isRead && (
-                                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                                )}
-                            </div>
-                        ))}
-
-                        {commentNotification?.map(notification => (
-                            <div key={notification._id} className="flex items-center gap-3 p-3 border-b hover:bg-gray-50">
-                                {/* Avatar của người gửi */}
-                                <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    <img
-                                        src={notification.senderId.profilePicture || "../assets/avatar.jpg"}
-                                        alt={notification.senderId.username}
-                                        className="w-full h-full object-cover"
                                     />
                                 </div>
 

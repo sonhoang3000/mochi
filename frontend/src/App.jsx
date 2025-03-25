@@ -15,7 +15,7 @@ import AdminPosts from './pages/Posts'
 import AdminUsers from './pages/Users'
 import Admin from './pages/admin'
 import { setOnlineUsers } from './redux/chatSlice'
-import { setLikeNotification } from './redux/rtnSlice'
+import { setActionNotification ,addActionNotification} from './redux/rtnSlice'
 import { setSocket } from './redux/socketSlice'
 import SearchUsers from './components/SearchUsers'
 import Explore from './components/Explore'
@@ -109,7 +109,7 @@ function App() {
 			})
 
 			socketio.on('notification', (notification) => {
-				dispatch(setLikeNotification(notification))
+				dispatch(addActionNotification(notification))
 			})
 
 			return () => {

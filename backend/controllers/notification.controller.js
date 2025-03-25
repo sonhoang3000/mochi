@@ -23,8 +23,6 @@ export const getNotifications = async (req, res) => {
             })
             .sort({ createdAt: -1 });
 
-        console.log('check notifications', notifications)
-
         return res.status(200).json({
             message: 'Get notifications successfully',
 			notifications,
@@ -37,10 +35,19 @@ export const getNotifications = async (req, res) => {
 
 export const markAsRead = async (req, res) => {
     try {
-        const notificationId = req.params.id;
-        await Notification.findByIdAndUpdate(notificationId, { isRead: true });
+        const notification = await Notification.findByIdAndUpdate(
+            req.params.id,
+            { isRead: true },
+            { new: true }
+        );
 
-        return res.status(200).json({ message: 'Notification marked as read' });
+        console.log("Notification ID to mark as read:", req.params.id);
+        
+        res.status(200).json({
+            success: true,
+            notification
+        });
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

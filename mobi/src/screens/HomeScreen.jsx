@@ -218,7 +218,7 @@ const HomeScreen = ({ navigation }) => {
 				<View style={styles.headerIcon}>
 					<TouchableOpacity
 						style={styles.profileFab}
-					// onPress={() => navigation.navigate('Messageslist', { userId })}
+						onPress={() => navigation.navigate('NoticeScreen')}
 					>
 						<Ionicons name="heart" size={28} color="red" />
 					</TouchableOpacity>

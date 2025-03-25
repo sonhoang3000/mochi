@@ -5,7 +5,9 @@ const getAllNotificationsService = () => {
 }
 
 const markAsRead = (notificationId) => {
-	return axios.patch(`/api/v1/notification/${notificationId}/read`, { withCredentials: true })
+	console.log("Marking notification as read:", notificationId);
+	return axios.put(`/api/v1/notification/${notificationId}/read`, {}, { withCredentials: true });
+
 }
 
 export { getAllNotificationsService, markAsRead }

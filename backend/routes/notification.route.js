@@ -5,6 +5,9 @@ import { getNotifications, markAsRead } from "../controllers/notification.contro
 const router = express.Router();
 
 router.get('/getnoti', isAuthenticated, getNotifications);
-router.patch('/:id/read', isAuthenticated, markAsRead);
-
+// router.put('/:id/read', isAuthenticated, markAsRead);
+router.put('/:id/read', isAuthenticated, (req, res, next) => {
+    console.log(`Received PUT request for notification ID: ${req.params.id}`);
+    next();
+}, markAsRead);
 export default router;

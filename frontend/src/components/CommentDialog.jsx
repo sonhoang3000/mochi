@@ -1,27 +1,41 @@
 import { Link } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, Bookmark, MessageCircle,BookMarked, Send } from "lucide-react"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from "react-redux"
 import Comment from "./Comment"
-import { addComment } from "@/services/postService"
+import { addComment, likeOrDislike, bookmarkPost } from "@/services/postService"
 import { setPosts } from "@/redux/postSlice"
 import { toast } from "sonner"
+import { FaHeart, FaRegHeart } from "react-icons/fa"
+import { setAuthUser } from '@/redux/authSlice'
+
 const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
 	const { selectedPost, posts } = useSelector(store => store.post);
 	const [comment, setComment] = useState([])
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const dispatch = useDispatch()
+	const { user } = useSelector(store => store.auth)
+	const [liked, setLiked] = useState(selectedPost?.likes?.includes(user?._id) || false)
+	const [postLike, setPostLike] = useState(selectedPost?.likes?.length || 0);
+	const [isBookmarked, setIsBookmarked] = useState(user?.bookmarks?.includes(selectedPost?._id) || false);
 
 	useEffect(() => {
-		if (selectedPost) {
-			setComment(selectedPost.comments)
-		}
-	}, [selectedPost])
+		console.log('User bookmarks:', user?.bookmarks);
+		console.log('Selected post ID:', selectedPost?._id);
+		console.log('Is bookmarked:', user?.bookmarks?.includes(selectedPost?._id));
+	
+        if (selectedPost && user) {
+            setIsBookmarked(user.bookmarks?.includes(selectedPost._id) || false);
+            setLiked(selectedPost.likes?.includes(user?._id) || false);
+            setPostLike(selectedPost.likes?.length || 0);
+            setComment(selectedPost.comments || []);
+        }
+    }, [selectedPost, user?._id]);
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
@@ -36,7 +50,6 @@ const CommentDialog = ({ open, setOpen }) => {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
 	}, []);
-
 
 	const changeEventHandler = (a) => {
 		const inputText = a.target.value
@@ -69,6 +82,53 @@ const CommentDialog = ({ open, setOpen }) => {
 		}
 	}
 
+	const likeOrDislikeHandler = async () => {
+		try {
+			const action = liked ? "dislike" : 'like'
+			const res = await likeOrDislike(selectedPost?._id, action)
+			if (res.success) {
+				// like hay dislike
+				const updatedLiked = liked ? postLike - 1 : postLike + 1
+				setPostLike(updatedLiked)
+				setLiked(!liked)
+
+				// updated post liked 
+				const updatedPostData = posts.map(p =>
+					p._id === selectedPost?._id ? {
+						...p,
+						likes: liked ? p.likes.filter(id => id !== user._id) : [...p.likes, user._id]
+					} : p
+				)
+				dispatch(setPosts(updatedPostData))
+				toast.success(res.message)
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	const bookmarkHandler = async () => {
+		if (!selectedPost?._id) return;
+
+		try {
+			const res = await bookmarkPost(selectedPost?._id)
+			if (res.success) {
+				setIsBookmarked(!isBookmarked);
+                const updatedUser = {
+                    ...user,
+                    bookmarks: isBookmarked 
+                        ? user.bookmarks.filter(id => id !== selectedPost._id)
+                        : [...(user.bookmarks || []), selectedPost._id]
+                };
+                dispatch(setAuthUser(updatedUser));
+                toast.success(res.message)
+			}
+		} catch (error) {
+			toast.error(error.response?.data?.message || "Có lỗi xảy ra khi bookmark bài viết")
+			console.log(error)
+		}
+	}
+
 	return (
 		<Dialog open={open}>
 			<DialogContent onInteractOutside={() => setOpen(false)} className="max-w-5xl p-0 flex flex-col">
@@ -79,13 +139,13 @@ const CommentDialog = ({ open, setOpen }) => {
 								className="rounded-sm my-2 w-full aspect-square object-contain"
 								src={selectedPost?.src}
 								alt="post_img"
-							// onDoubleClick={likeOrDislikeHandler}
+								onDoubleClick={likeOrDislikeHandler}
 							/>
 						) : selectedPost?.typeContent === "video" ? (
 							<video
 								className="rounded-sm my-2 w-full aspect-square object-contain"
 								controls
-							// onDoubleClick={likeOrDislikeHandler}
+								onDoubleClick={likeOrDislikeHandler}
 							>
 								<source src={selectedPost?.src} type="video/mp4" />
 								Your browser does not support the video tag.
@@ -125,6 +185,23 @@ const CommentDialog = ({ open, setOpen }) => {
 							{
 								comment?.map((comment) => <Comment key={comment._id} comment={comment} />)
 							}
+						</div>
+						<div className="px-4 py-2">
+							<div className="flex items-center justify-between mb-2">
+								<div className="flex items-center gap-3">
+									{liked ?
+										<FaHeart onClick={likeOrDislikeHandler} size={'24'} className="cursor-pointer text-red-600" /> :
+										<FaRegHeart onClick={likeOrDislikeHandler} size={'22px'} className="cursor-pointer hover:text-gray-600" />
+									}
+									<MessageCircle className="cursor-pointer hover:text-gray-600" />
+									<Send className="cursor-pointer hover:text-gray-600" />
+								</div>
+								{isBookmarked ? 
+									<BookMarked onClick={bookmarkHandler} className="cursor-pointer text-black" /> :
+									<Bookmark onClick={bookmarkHandler} className="cursor-pointer hover:text-gray-600" />
+								}
+							</div>
+							<span className="font-medium block">{postLike} likes</span>
 						</div>
 						<div className="p-4">
 							<div className="flex items-center gap-2">

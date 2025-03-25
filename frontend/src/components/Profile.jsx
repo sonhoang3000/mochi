@@ -10,6 +10,8 @@ import { createConversationService, followOrUnfollow } from "@/services/userServ
 import { toast } from "sonner"
 import { setUserProfile, setAuthUser } from "@/redux/authSlice"
 import { setGetConversation } from "@/redux/authSlice"
+import CommentDialog from "./CommentDialog"
+import { setSelectedPost } from "@/redux/postSlice"
 
 const Profile = () => {
   const params = useParams()
@@ -18,10 +20,10 @@ const Profile = () => {
   const userId = params.id
   useGetUserProfile(userId)
   const [activeTab, setActiveTab] = useState("posts")
+  const [open, setOpen] = useState(false)
 
   const { userProfile, user, getConversation } = useSelector(store => store.auth)
 
-  // ✅ Check an toàn tránh lỗi null
   const isLoggedInUserProfile =
     user && userProfile && user._id === userProfile._id
 
@@ -117,7 +119,7 @@ const Profile = () => {
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </section>
-          <section>
+            <section>
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-2">
                 <span>{userProfile?.username}</span>
@@ -180,7 +182,14 @@ const Profile = () => {
 
           <div className="grid grid-cols-3 gap-1">
             {displayedPost?.map((post) => (
-              <div key={post?._id} className="relative group cursor-pointer">
+              <div 
+                key={post?._id} 
+                className="relative group cursor-pointer"
+                onClick={() => {
+                  dispatch(setSelectedPost(post));
+                  setOpen(true);
+                }}
+              >
                 {post?.typeContent === "image" ? (
                   <img
                     className="rounded-sm my-2 w-full aspect-square object-cover"
@@ -211,6 +220,7 @@ const Profile = () => {
               </div>
             ))}
           </div>
+          <CommentDialog open={open} setOpen={setOpen} />
         </div>
       </div>
     </div>
