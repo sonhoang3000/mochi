@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import { useSelector } from "react-redux";
 import { Trash2Icon } from 'lucide-react'
-import { deleteUserService } from '@/services/\badminService';
+import { deleteUserService } from '@/services/adminService';
 
 const UserManagement = () => {
 	const [users, setUsers] = useState([]);

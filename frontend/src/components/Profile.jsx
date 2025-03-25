@@ -33,19 +33,35 @@ const Profile = () => {
     try {
       const res = await createConversationService(targetId)
       if (res.success) {
-        const updatedConversations = getConversation?.map(conv => {
-          if (conv._id === targetId) {
-            return { ...conv, updatedAt: new Date().toISOString() }
-          }
-          return conv
-        }) || []
+        // Kiểm tra xem conversation đã tồn tại chưa
+        const existingConversation = getConversation?.find(conv => conv._id === targetId);
+        
+        let updatedConversations = [...(getConversation || [])];
+        
+        if (existingConversation) {
+          // Nếu đã tồn tại, cập nhật updatedAt
+          updatedConversations = updatedConversations.map(conv => {
+            if (conv._id === targetId) {
+              return { ...conv, updatedAt: new Date().toISOString() }
+            }
+            return conv
+          });
+        } else {
+          // Nếu chưa tồn tại, thêm conversation mới vào đầu danh sách
+          updatedConversations.unshift({
+            ...userProfile,  // Thêm thông tin của người dùng được chat
+            _id: targetId,
+            updatedAt: new Date().toISOString()
+          });
+        }
 
+        // Sắp xếp lại theo thời gian mới nhất
         updatedConversations.sort(
           (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-        )
+        );
 
-        dispatch(setGetConversation(updatedConversations))
-        navigate("/chat")
+        dispatch(setGetConversation(updatedConversations));
+        navigate("/chat");
       }
     } catch (error) {
       console.error('Lỗi khi tạo cuộc trò chuyện:', error.response ? error.response.data : error.message)

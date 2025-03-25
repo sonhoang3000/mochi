@@ -9,6 +9,7 @@ import messageRoute from "./routes/message.route.js";
 import storyRoute from "./routes/story.route.js";
 import adminRoute from "./routes/admin.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import notificationRoute from "./routes/notification.route.js"
 import { app, server } from "./socket/socket.js";
 import { EventEmitter } from "events";
 
@@ -45,6 +46,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/message", messageRoute);
 app.use("/api/v1/story", storyRoute);
+app.use("/api/v1/notification", notificationRoute);
 app.use("/admin", adminRoute);
 app.use("/api/v1/ai", aiRoutes);
 

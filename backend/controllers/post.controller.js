@@ -3,6 +3,7 @@ import cloudinary from "../utils/cloudinary.js";
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
+import { Notification } from '../models/notification.model.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import axios from 'axios';
 import multer from "multer";
@@ -171,24 +172,37 @@ export const likePost = async (req, res) => {
 
 		// implement socket io for real time notification
 		const user = await User.findById(currentID).select('username profilePicture');
-
 		const postOwnerId = post.author.toString();
 		if (postOwnerId !== currentID) {
-			// emit a notification event
-			const notification = {
-				type: 'like',
-				userId: currentID,
-				userDetails: user,
-				postId,
-				message: 'Your post was liked'
+
+			const notification = await Notification.create({
+                type: 'like',
+                senderId: currentID,
+                receiverId: postOwnerId,
+                postId,
+                message: `${user.username} đã thích bài viết của bạn.`
+            });
+
+			const userAuthor = await User.findById(postOwnerId);
+			if (userAuthor) {
+				userAuthor.notifications.push(notification._id);
+				await userAuthor.save();
 			}
-			const postOwnerSocketId = getReceiverSocketId(postOwnerId);
-			io.to(postOwnerSocketId).emit('notification', notification);
+            // Emit socket event
+            const postOwnerSocketId = getReceiverSocketId(postOwnerId);
+            io.to(postOwnerSocketId).emit('notification', {
+                type: 'like',
+                senderId: currentID,
+                userDetails: user,
+                postId,
+                message: `${user.username} đã thích bài viết của bạn.`
+            });
+
 		}
 
 		return res.status(200).json({ message: 'Post liked', success: true });
 	} catch (error) {
-
+		return res.status(500).json({ message: error.message, success: false });
 	}
 }
 export const dislikePost = async (req, res) => {
@@ -202,30 +216,33 @@ export const dislikePost = async (req, res) => {
 		await post.updateOne({ $pull: { likes: currentID } });
 		await post.save();
 
-		// implement socket io for real time notification
-		const user = await User.findById(currentID).select('username profilePicture');
-		const postOwnerId = post.author.toString();
-		if (postOwnerId !== currentID) {
-			// emit a notification event
-			const notification = {
-				type: 'dislike',
-				userId: currentID,
-				userDetails: user,
-				postId,
-				message: 'Your post was disliked'
-			}
-			const postOwnerSocketId = getReceiverSocketId(postOwnerId);
-			io.to(postOwnerSocketId).emit('notification', notification);
-		}
+		await Notification.deleteOne({ 
+            type: 'like', 
+            senderId: currentID, 
+            postId, 
+            receiverId: post.author 
+        });
+
+        const postOwnerId = post.author.toString();
+        if (postOwnerId !== currentID) {
+            // Emit socket event để xoá thông báo
+            const postOwnerSocketId = getReceiverSocketId(postOwnerId);
+            io.to(postOwnerSocketId).emit('notification_removed', {
+                type: 'like',
+                senderId: currentID,
+                postId
+            });
+        }
+
 		return res.status(200).json({ message: 'Post disliked', success: true });
 	} catch (error) {
-
+		return res.status(500).json({ message: error.message, success: false });
 	}
 }
 export const addComment = async (req, res) => {
 	try {
 		const postId = req.params.id;
-		const commentKrneWalaUserKiId = req.id;
+		const senderId = req.id; // Người bình luận
 		const { text } = req.body;
 		const post = await Post.findById(postId);
 
@@ -233,9 +250,9 @@ export const addComment = async (req, res) => {
 
 		const comment = await Comment.create({
 			text,
-			author: commentKrneWalaUserKiId,
+			author: senderId,
 			post: postId
-		})
+		});
 
 		await comment.populate({
 			path: 'author',
@@ -244,6 +261,36 @@ export const addComment = async (req, res) => {
 
 		post.comments.push(comment._id);
 		await post.save();
+
+		const receiverId = post.author.toString();
+		if (receiverId !== senderId) {
+			// Lưu thông báo vào database
+			const notification = await Notification.create({
+				type: 'comment',
+				senderId,
+				postId,
+				receiverId,
+				message: `${comment.author.username} đã bình luận vào bài viết của bạn.`
+			});
+
+			const userAuthor = await User.findById(receiverId);
+			if (userAuthor) {
+				userAuthor.notifications.push(notification._id);
+				await userAuthor.save();
+			}
+
+			// Emit socket để thông báo real-time
+			const postOwnerSocketId = getReceiverSocketId(receiverId);
+			if (postOwnerSocketId) {
+				io.to(postOwnerSocketId).emit('notification', {
+					type: 'comment',
+					senderId,
+					postId,
+					message: `${comment.author.username} đã bình luận vào bài viết của bạn.`,
+					createdAt: notification.createdAt
+				});
+			}
+		}
 
 		return res.status(201).json({
 			message: 'Comment Added',

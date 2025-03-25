@@ -1,7 +1,7 @@
 import { setAuthUser, setSuggestedUsers, setUserProfile, setSelectedUser, setGetConversation } from '@/redux/authSlice'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { setOnlineUsers, setMessages } from '@/redux/chatSlice'
-import { clearLikeNotification } from '@/redux/rtnSlice'
+// import { clearLikeNotification } from '@/redux/rtnSlice'
 import { setSocket } from '@/redux/socketSlice'
 import { logoutUser } from '@/services/userService'
 import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, AlignJustify } from 'lucide-react'
@@ -14,13 +14,14 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { FaRobot } from "react-icons/fa"; 
+import Notification from './Notification'
 const LeftSidebar = () => {
 	const nagivate = useNavigate()
 	const { user } = useSelector(store => store.auth)
 	const { likeNotification } = useSelector(store => store.realTimeNotification)
 	const dispatch = useDispatch()
 	const [open, setOpen] = useState(false)
-
+	const [openNotification, setOpenNotification] = useState(false)
 	const logoutHandler = async () => {
 		try {
 			const res = await logoutUser()
@@ -41,7 +42,7 @@ const LeftSidebar = () => {
 				dispatch(setMessages([]))
 
 				//RealTimeNotification
-				dispatch(clearLikeNotification())
+				// dispatch(clearLikeNotification())
 
 				//socket
 				dispatch(setSocket(null))
@@ -69,9 +70,10 @@ const LeftSidebar = () => {
 			nagivate(`/search`)
 		} else if (textType === "Explore") {
 			nagivate(`/explore`)
-		}
-		else if (textType === "AI Assistant") {
+		} else if (textType === "AI Assistant") {
 			nagivate(`/ai-assistant`)
+		} else if (textType === "Notifications") {
+			setOpenNotification(true)
 		}
 	}		
 
@@ -147,6 +149,10 @@ const LeftSidebar = () => {
 
 			<CreatePost
 				open={open} setOpen={setOpen}
+			/>
+
+			<Notification
+				open={openNotification} setOpen={setOpenNotification}
 			/>
 
 		</div>

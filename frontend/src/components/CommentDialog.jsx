@@ -55,7 +55,7 @@ const CommentDialog = ({ open, setOpen }) => {
 			if (res.success) {
 				const updatedCommentData = [...comment, res.comment];
 				setComment(updatedCommentData);
-				const updatedPostData = posts.map(p =>
+				const updatedPostData = posts?.map(p =>
 					p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
 				);
 				dispatch(setPosts(updatedPostData));
@@ -103,9 +103,7 @@ const CommentDialog = ({ open, setOpen }) => {
 								</Link>
 								<div>
 									<Link to={`/profile/${selectedPost?.author?._id}`} className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
-									{/* <span className="text-gray-600 text-sm">Bio here ...</span> */}
 								</div>
-
 							</div>
 
 							<Dialog>
@@ -125,7 +123,7 @@ const CommentDialog = ({ open, setOpen }) => {
 						<hr />
 						<div className="flex-1 overflow-y-auto max-h-96 p-4">
 							{
-								comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+								comment?.map((comment) => <Comment key={comment._id} comment={comment} />)
 							}
 						</div>
 						<div className="p-4">
