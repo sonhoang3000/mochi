@@ -1,0 +1,9 @@
+PORT=8000   
+MONGO_URL=mongodb+srv://vuhoangson3000:sonhoang123456@cluster0.ughmf.mongodb.net/
+# MONGO_URL=mongodb://mapquoc7:123456789%40mochi@cluster0-shard-00-00.vmy1c.mongodb.net:27017,cluster0-shard-00-01.vmy1c.mongodb.net:27017,cluster0-shard-00-02.vmy1c.mongodb.net:27017/?replicaSet=atlas-3snc20-shard-0&ssl=true&authSource=admin
+SECRET_KEY=mochimochizxcvbnmklkjhgfdsaqwertyuiop
+API_KEY=789451771585477
+API_SECRET=PLzwtzhpXlAjSYI1BsTQs9mbAs0
+CLOUD_NAME=dybo8zd4y
+URL=http://localhost:5173
+OPENAI_API_KEY=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
