@@ -96,7 +96,7 @@ const UserManagement = () => {
 												<td className="p-3">{user.email}</td>
 												<td className="p-3 flex items-center">
 													<span className={`w-3 h-3 rounded-full mr-2 ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
-													{user.isOnline ? 'Online' : 'Offline'}
+													{isOnline ? 'Online' : 'Offline'}
 												</td>
 												<td
 													className="cursor-pointer text-red-500 hover:text-red-700 transition duration-200"

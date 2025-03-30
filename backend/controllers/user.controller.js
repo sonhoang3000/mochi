@@ -108,7 +108,20 @@ export const getProfile = async (req, res) => {
 		let user = await User.findById(userId)
 			.populate({
 				path: 'posts',
-				options: { sort: { createdAt: -1 } } // Sắp xếp posts theo createdAt giảm dần
+				options: { sort: { createdAt: -1 } },
+				populate: [
+					{
+						path: 'author',
+						select: 'username profilePicture _id'
+					},
+					{
+						path: 'comments',
+						populate: {
+							path: 'author',
+							select: 'username profilePicture _id'
+						}
+					}
+				]
 			})
 			.populate('following')
 			.populate('bookmarks');
@@ -118,12 +131,11 @@ export const getProfile = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({ message: "Internal server error", success: false });
 	}
 };
-
 export const editProfile = async (req, res) => {
 	try {
-		console.log('check')
 		const userId = req.id;
 		const { bio, gender } = req.body;
 		const profilePicture = req.file;
@@ -195,7 +207,6 @@ export const getSuggestedUsers = async (req, res) => {
 		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
-
 export const followOrUnfollow = async (req, res) => {
 	try {
 		const currentUserId = req.id;
@@ -236,7 +247,6 @@ export const followOrUnfollow = async (req, res) => {
 		console.log(error);
 	}
 }
-
 export const searchUser = async (req, res) => {
 	try {
 		const { limit = 10, lastId } = req.query;
@@ -273,7 +283,6 @@ export const searchUser = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
 export const getConversation = async (req, res) => {
 	try {
 		const currentUserId = req.id; // Lấy ID user hiện tại từ request
@@ -302,7 +311,6 @@ export const getConversation = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
 export const createConversation = async (req, res) => {
 	const senderId = req.id;
 	const receiverId = req.params.id;
@@ -326,7 +334,6 @@ export const createConversation = async (req, res) => {
 		conversation
 	})
 }
-
 export const getFollowing = async (req, res) => {
 	try {
 		const userId = req.params.id;
@@ -342,7 +349,6 @@ export const getFollowing = async (req, res) => {
 		res.status(500).json({ message: "Server error", success: false });
 	}
 };
-
 export const getFollowers = async (req, res) => {
 	try {
 		const userId = req.params.id;
@@ -358,3 +364,4 @@ export const getFollowers = async (req, res) => {
 		res.status(500).json({ message: "Server error", success: false });
 	}
 };
+

@@ -16,7 +16,6 @@ const NoticeScreen = () => {
             try {
                 const response = await getAllNotificationsService();
                 setNotifications(response.data.notifications);    
-                console.log('check',response.data.notifications)
             } catch (error) {
                 console.error('Lỗi khi lấy thông báo:', error);
             } finally {
@@ -34,8 +33,6 @@ const NoticeScreen = () => {
             month: '2-digit',
             year: 'numeric'
         });
-
-        console.log('check',item)
 
         return (
             <TouchableOpacity 
@@ -56,7 +53,6 @@ const NoticeScreen = () => {
     };
 
     const handleNotificationPress = (item) => {
-        console.log('Notification pressed:', item);
         navigation.navigate('PostDetail', { 
             post: item.postId  // Truyền thông tin bài post vào màn hình PostDetail
         });

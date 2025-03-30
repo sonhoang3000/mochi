@@ -57,7 +57,6 @@ const getConversationService = () => {
 }
 
 const createConversationService = (targetId) => {
-	console.log('check ', targetId)
 	return axios.get(
 		`/api/v1/user/createconversation/${targetId}`,
 		// {}, // Phải có body (nếu không gửi gì, truyền `{}`)

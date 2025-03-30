@@ -128,9 +128,7 @@ router.delete("/delete/post/:id", async (req, res) => {
         const postId = req.params.id;
         const post = await Post.findById(postId);
 
-        // console.log('check post', post.author)
         const authorId = post.author
-        console.log('check post', authorId)
 
         if (!post) return res.status(404).json({ message: 'Post not found', success: false });
         await Post.findByIdAndDelete(postId);

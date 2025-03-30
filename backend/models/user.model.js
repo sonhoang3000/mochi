@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
       posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
       bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
       stories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
+      role: { type: String, enum: ['admin', 'user'], default: 'user' },
       notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
 }, { timestamps: true });
 export const User = mongoose.model('User', userSchema);

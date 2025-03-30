@@ -19,7 +19,7 @@ import AdminPosts from './pages/Posts'
 import AdminUsers from './pages/Users'
 import Admin from './pages/admin'
 import { setOnlineUsers } from './redux/chatSlice'
-import { addActionNotification } from './redux/rtnSlice'
+import { addNewNotification } from './redux/rtnSlice'
 import { setSocket } from './redux/socketSlice'
 
 const browserRouter = createBrowserRouter([
@@ -44,22 +44,6 @@ const browserRouter = createBrowserRouter([
 				element: <ProtectedRoutes> <ChatPage /></ProtectedRoutes>
 			},
 			{
-				path: "/admin",
-				element: <ProtectedRoutes> <Admin /></ProtectedRoutes>
-			},
-			{
-				path: "/admin/dashboard",
-				element: <ProtectedRoutes> <AdminDashboard /></ProtectedRoutes>
-			},
-			{
-				path: "/admin/posts",
-				element: <ProtectedRoutes> <AdminPosts /></ProtectedRoutes>
-			},
-			{
-				path: "/admin/users",
-				element: <ProtectedRoutes> <AdminUsers /></ProtectedRoutes>
-			},
-			{
 				path: "/search",
 				element: <ProtectedRoutes><SearchUsers /></ProtectedRoutes>
 			},
@@ -74,8 +58,7 @@ const browserRouter = createBrowserRouter([
 			{
 				path: "/ai-assistant",
 				element: <ProtectedRoutes><AIAssistant /></ProtectedRoutes>
-			  }
-			  
+			}
 
 		]
 	},
@@ -86,6 +69,22 @@ const browserRouter = createBrowserRouter([
 	{
 		path: "/signup",
 		element: <Signup />,
+	},
+	{
+		path: "/admin",
+		element: <ProtectedRoutes> <Admin /></ProtectedRoutes>
+	},
+	{
+		path: "/admin/dashboard",
+		element: <ProtectedRoutes> <AdminDashboard /></ProtectedRoutes>
+	},
+	{
+		path: "/admin/posts",
+		element: <ProtectedRoutes> <AdminPosts /></ProtectedRoutes>
+	},
+	{
+		path: "/admin/users",
+		element: <ProtectedRoutes> <AdminUsers /></ProtectedRoutes>
 	},
 ])
 function App() {
@@ -103,13 +102,12 @@ function App() {
 			})
 			dispatch(setSocket(socketio))
 
-			// listen all the events
 			socketio.on('getOnlineUsers', (onlineUsers) => {
 				dispatch(setOnlineUsers(onlineUsers))
 			})
 
 			socketio.on('notification', (notification) => {
-				dispatch(addActionNotification(notification))
+				dispatch(addNewNotification(notification))
 			})
 
 			return () => {

@@ -76,6 +76,9 @@ const LeftSidebar = () => {
 			nagivate(`/ai-assistant`)
 		} else if (textType === "Notifications") {
 			setOpenNotification(true)
+		} else if (textType === "Fake News") {
+			// Handle Fake News click
+			nagivate(`/fake-news`)
 		}
 	}		
 
@@ -98,6 +101,7 @@ const LeftSidebar = () => {
 		{ icon: <FaRobot className="text-lg text-pink-500" />, text: "AI Assistant" },
 		{ icon: <LogOut />, text: "Logout" },
 		{ icon: <AlignJustify />, text: "More" },
+		{ icon: <FaRobot className="text-lg text-yellow-500" />, text: "Fake News" } // Added "Fake News" item
 	]
 	if (location.pathname.startsWith("/admin")) {
 		return null
@@ -105,7 +109,6 @@ const LeftSidebar = () => {
 
 	const handleMarkAllAsRead = async () => {
 		try {
-			// Assuming markAsReadAll is a service function that marks all notifications as read in the database
 			await Promise.all(actionNotification.map(notification => markAsRead(notification._id)));
 	
 			const updatedNotifications = actionNotification.map(notification => ({

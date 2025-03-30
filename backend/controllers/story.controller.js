@@ -5,7 +5,6 @@ import cloudinary from "../utils/cloudinary.js";
 
 export const addStory = async (req, res) => {
   try {
-    console.log('check add story')
     const { caption } = req.body;
     const file = req.file;
     const authorId = req.id;

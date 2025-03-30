@@ -5,7 +5,6 @@ const deleteUserService = (userId) => {
 }
 
 const deletePostService = (postId) => {
-      console.log('check postId', postId)
       return axios.delete(`/admin/delete/post/${postId}`, { withCredentials: true })
 }
 

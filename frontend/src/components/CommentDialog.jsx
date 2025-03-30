@@ -1,60 +1,38 @@
 import { Link } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
-<<<<<<< HEAD
-import { MoreHorizontal, Bookmark, MessageCircle,BookMarked, Send } from "lucide-react"
-=======
-import { MoreHorizontal } from "lucide-react"
->>>>>>> 80a7627 ( XMAI AI + MOBI)
+import { MoreHorizontal, Bookmark, MessageCircle, BookMarked, Send } from "lucide-react"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from "react-redux"
 import Comment from "./Comment"
-<<<<<<< HEAD
 import { addComment, likeOrDislike, bookmarkPost } from "@/services/postService"
 import { setPosts } from "@/redux/postSlice"
 import { toast } from "sonner"
 import { FaHeart, FaRegHeart } from "react-icons/fa"
 import { setAuthUser } from '@/redux/authSlice'
 
-=======
-import { addComment } from "@/services/postService"
-import { setPosts } from "@/redux/postSlice"
-import { toast } from "sonner"
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
 	const { selectedPost, posts } = useSelector(store => store.post);
 	const [comment, setComment] = useState([])
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const dispatch = useDispatch()
-<<<<<<< HEAD
 	const { user } = useSelector(store => store.auth)
 	const [liked, setLiked] = useState(selectedPost?.likes?.includes(user?._id) || false)
 	const [postLike, setPostLike] = useState(selectedPost?.likes?.length || 0);
 	const [isBookmarked, setIsBookmarked] = useState(user?.bookmarks?.includes(selectedPost?._id) || false);
 
 	useEffect(() => {
-		console.log('User bookmarks:', user?.bookmarks);
-		console.log('Selected post ID:', selectedPost?._id);
-		console.log('Is bookmarked:', user?.bookmarks?.includes(selectedPost?._id));
-	
-        if (selectedPost && user) {
-            setIsBookmarked(user.bookmarks?.includes(selectedPost._id) || false);
-            setLiked(selectedPost.likes?.includes(user?._id) || false);
-            setPostLike(selectedPost.likes?.length || 0);
-            setComment(selectedPost.comments || []);
-        }
-    }, [selectedPost, user?._id]);
-=======
-
-	useEffect(() => {
-		if (selectedPost) {
-			setComment(selectedPost.comments)
+		if (selectedPost && user) {
+			setIsBookmarked(user.bookmarks?.includes(selectedPost._id) || false);
+			setLiked(selectedPost.likes?.includes(user?._id) || false);
+			setPostLike(selectedPost.likes?.length || 0);
+			setComment(selectedPost.comments || []);
 		}
-	}, [selectedPost])
->>>>>>> 80a7627 ( XMAI AI + MOBI)
+	}, [selectedPost, user]);
+
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
@@ -70,10 +48,6 @@ const CommentDialog = ({ open, setOpen }) => {
 		};
 	}, []);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 	const changeEventHandler = (a) => {
 		const inputText = a.target.value
 		if (inputText.trim()) {
@@ -91,11 +65,7 @@ const CommentDialog = ({ open, setOpen }) => {
 			if (res.success) {
 				const updatedCommentData = [...comment, res.comment];
 				setComment(updatedCommentData);
-<<<<<<< HEAD
 				const updatedPostData = posts?.map(p =>
-=======
-				const updatedPostData = posts.map(p =>
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 					p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
 				);
 				dispatch(setPosts(updatedPostData));
@@ -109,7 +79,6 @@ const CommentDialog = ({ open, setOpen }) => {
 		}
 	}
 
-<<<<<<< HEAD
 	const likeOrDislikeHandler = async () => {
 		try {
 			const action = liked ? "dislike" : 'like'
@@ -142,14 +111,14 @@ const CommentDialog = ({ open, setOpen }) => {
 			const res = await bookmarkPost(selectedPost?._id)
 			if (res.success) {
 				setIsBookmarked(!isBookmarked);
-                const updatedUser = {
-                    ...user,
-                    bookmarks: isBookmarked 
-                        ? user.bookmarks.filter(id => id !== selectedPost._id)
-                        : [...(user.bookmarks || []), selectedPost._id]
-                };
-                dispatch(setAuthUser(updatedUser));
-                toast.success(res.message)
+				const updatedUser = {
+					...user,
+					bookmarks: isBookmarked
+						? user.bookmarks.filter(id => id !== selectedPost._id)
+						: [...(user.bookmarks || []), selectedPost._id]
+				};
+				dispatch(setAuthUser(updatedUser));
+				toast.success(res.message)
 			}
 		} catch (error) {
 			toast.error(error.response?.data?.message || "Có lỗi xảy ra khi bookmark bài viết")
@@ -157,8 +126,6 @@ const CommentDialog = ({ open, setOpen }) => {
 		}
 	}
 
-=======
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 	return (
 		<Dialog open={open}>
 			<DialogContent onInteractOutside={() => setOpen(false)} className="max-w-5xl p-0 flex flex-col">
@@ -169,21 +136,13 @@ const CommentDialog = ({ open, setOpen }) => {
 								className="rounded-sm my-2 w-full aspect-square object-contain"
 								src={selectedPost?.src}
 								alt="post_img"
-<<<<<<< HEAD
 								onDoubleClick={likeOrDislikeHandler}
-=======
-							// onDoubleClick={likeOrDislikeHandler}
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 							/>
 						) : selectedPost?.typeContent === "video" ? (
 							<video
 								className="rounded-sm my-2 w-full aspect-square object-contain"
 								controls
-<<<<<<< HEAD
 								onDoubleClick={likeOrDislikeHandler}
-=======
-							// onDoubleClick={likeOrDislikeHandler}
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 							>
 								<source src={selectedPost?.src} type="video/mp4" />
 								Your browser does not support the video tag.
@@ -201,14 +160,8 @@ const CommentDialog = ({ open, setOpen }) => {
 								</Link>
 								<div>
 									<Link to={`/profile/${selectedPost?.author?._id}`} className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
-<<<<<<< HEAD
-								</div>
-=======
-									{/* <span className="text-gray-600 text-sm">Bio here ...</span> */}
-								</div>
-
->>>>>>> 80a7627 ( XMAI AI + MOBI)
-							</div>
+								</div >
+							</div >
 
 							<Dialog>
 								<DialogTrigger asChild>
@@ -223,11 +176,10 @@ const CommentDialog = ({ open, setOpen }) => {
 									</div>
 								</DialogContent>
 							</Dialog>
-						</div>
+						</div >
 						<hr />
 						<div className="flex-1 overflow-y-auto max-h-96 p-4">
 							{
-<<<<<<< HEAD
 								comment?.map((comment) => <Comment key={comment._id} comment={comment} />)
 							}
 						</div>
@@ -241,18 +193,13 @@ const CommentDialog = ({ open, setOpen }) => {
 									<MessageCircle className="cursor-pointer hover:text-gray-600" />
 									<Send className="cursor-pointer hover:text-gray-600" />
 								</div>
-								{isBookmarked ? 
+								{isBookmarked ?
 									<BookMarked onClick={bookmarkHandler} className="cursor-pointer text-black" /> :
 									<Bookmark onClick={bookmarkHandler} className="cursor-pointer hover:text-gray-600" />
 								}
 							</div>
 							<span className="font-medium block">{postLike} likes</span>
 						</div>
-=======
-								comment.map((comment) => <Comment key={comment._id} comment={comment} />)
-							}
-						</div>
->>>>>>> 80a7627 ( XMAI AI + MOBI)
 						<div className="p-4">
 							<div className="flex items-center gap-2">
 								<input type="text" value={text} onChange={changeEventHandler} placeholder="Add a comment ..." className="w-full outline-none border text-sm border-gray-300 p-2 rounded"
@@ -265,10 +212,10 @@ const CommentDialog = ({ open, setOpen }) => {
 								<Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
 							</div>
 						</div>
-					</div>
-				</div>
-			</DialogContent>
-		</Dialog>
+					</div >
+				</div >
+			</DialogContent >
+		</Dialog >
 	)
 }
 

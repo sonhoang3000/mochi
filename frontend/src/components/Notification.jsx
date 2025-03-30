@@ -5,40 +5,49 @@ import { useState, useEffect } from "react";
 import CommentDialog from "./CommentDialog";
 import { setSelectedPost } from "@/redux/postSlice"
 import { markAsRead } from "@/services/notificationService"
-import { setActionNotification } from "@/redux/rtnSlice"
+import useGetAllNotifications from "@/hooks/useGetAllNotifications"
 
 const Notification = ({ open, setOpen }) => {
     const { actionNotification } = useSelector(store => store.realTimeNotification)
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+    const { refreshNotifications } = useGetAllNotifications();
     const dispatch = useDispatch();
     
+    const sortedNotifications = Array.isArray(actionNotification) 
+        ? [...actionNotification].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        : [];
+
+    useEffect(() => {
+        if (open) {
+            refreshNotifications();
+        }
+    }, [open]);
+
     useEffect(() => {
         const markAllAsRead = async () => {
-            if (open) {
-                const unreadNotifications = [
-                    ...(actionNotification || [])
-                ].filter(notification => !notification.isRead);
+            if (!open || !actionNotification?.length) return;
 
-                try {
-                    await Promise.all(
-                        unreadNotifications.map(notification => 
-                            markAsRead(notification._id)
-                        )
-                    );
-                    
-                    const updatedNotifications = actionNotification.map(notification => ({
-                        ...notification,
-                        isRead: true
-                    }));
-                    dispatch(setActionNotification(updatedNotifications));
-                } catch (error) {
-                    console.error("Error marking notifications as read:", error);
-                }
+            const unreadNotifications = actionNotification.filter(
+                notification => !notification.isRead
+            );
+
+            if (unreadNotifications.length === 0) return;
+
+            try {
+                await Promise.all(
+                    unreadNotifications.map(notification => 
+                        markAsRead(notification._id)
+                    )
+                );
+                
+                refreshNotifications();
+            } catch (error) {
+                console.error("Error marking notifications as read:", error);
             }
         };
 
         markAllAsRead();
-    }, [open]);
+    }, [open, actionNotification]);
 
     const handlePostClick = (post) => {
         const postWithComments = {
@@ -57,7 +66,7 @@ const Notification = ({ open, setOpen }) => {
                         <DialogTitle>Notification</DialogTitle>
                     </DialogHeader>
                     <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                        {Array.isArray(actionNotification) && actionNotification.map(notification => (
+                        {sortedNotifications.map(notification => (
                             <div key={notification._id} className="flex items-center gap-3 p-3 border-b hover:bg-gray-50">
                                 {/* Avatar của người gửi */}
                                 <div className="w-10 h-10 rounded-full overflow-hidden">

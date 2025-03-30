@@ -39,10 +39,7 @@ export const markAsRead = async (req, res) => {
             req.params.id,
             { isRead: true },
             { new: true }
-        );
-
-        console.log("Notification ID to mark as read:", req.params.id);
-        
+        );        
         res.status(200).json({
             success: true,
             notification

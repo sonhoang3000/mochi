@@ -23,8 +23,7 @@ const Profile = () => {
 
   const { userProfile, user, getConversation } = useSelector(store => store.auth)
 
-  const isLoggedInUserProfile =
-    user && userProfile && user._id === userProfile._id
+  const isLoggedInUserProfile = user && userProfile && user._id === userProfile._id
 
   const handleTabChange = (tab) => {
     setActiveTab(tab)
@@ -100,8 +99,7 @@ const Profile = () => {
     }
   }
 
-  const displayedPost =
-    activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
+  const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
 
   // ✅ Loading state khi userProfile chưa có
   if (!userProfile) {

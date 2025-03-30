@@ -9,10 +9,10 @@ const rtnSlice = createSlice({
 		setActionNotification: (state, action) => {
             state.actionNotification = action.payload
         },
-		addActionNotification: (state, action) => {
-            state.actionNotification = [...state.actionNotification, action.payload];
+		addNewNotification: (state, action) => {
+            state.actionNotification = [action.payload, ...state.actionNotification]
         }
 	}
 })
-export const { setActionNotification, addActionNotification } = rtnSlice.actions
+export const { setActionNotification, addNewNotification } = rtnSlice.actions
 export default rtnSlice.reducer
