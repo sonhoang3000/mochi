@@ -14,6 +14,7 @@ import Profile from './components/Profile'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import SearchUsers from './components/SearchUsers'
 import Signup from './components/Signup'
+import Story from './components/Story'
 import SuggestedUsers from './components/SuggestedUsers'
 import AdminDashboard from './pages/Dashboard'
 import AdminPosts from './pages/Posts'
@@ -79,6 +80,10 @@ const browserRouter = createBrowserRouter([
 			  {
 				path: "/fakenew",
 				element: <ProtectedRoutes><FakeNewsChecker /></ProtectedRoutes>
+			  },
+			  {
+				path: "/story",
+				element: <ProtectedRoutes><Story/></ProtectedRoutes>
 			  }
 			  
 

@@ -1,6 +1,7 @@
 import { setAuthUser } from '@/redux/authSlice'
 import { setPosts } from "@/redux/postSlice"
 import { addComment, bookmarkPost, likeOrDislike } from "@/services/postService"
+import axios from 'axios'
 import { Bookmark, BookMarked, MessageCircle, MoreHorizontal, Send } from "lucide-react"
 import PropTypes from 'prop-types'
 import { useEffect, useState } from "react"
@@ -12,7 +13,6 @@ import Comment from "./Comment"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
-
 const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
 	const { selectedPost, posts } = useSelector(store => store.post);
@@ -43,9 +43,7 @@ const CommentDialog = ({ open, setOpen }) => {
 				setOpen(false);
 			}
 		};
-
 		document.addEventListener("keydown", handleKeyDown);
-
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
@@ -59,28 +57,50 @@ const CommentDialog = ({ open, setOpen }) => {
 			setText("")
 		}
 	}
-
 	const sendMessageHandler = async () => {
-		if (isSubmitting) return; // Tránh gọi hàm nếu đã có yêu cầu đang xử lý
+		if (isSubmitting) return; 
 		setIsSubmitting(true);
+	  
 		try {
-			const res = await addComment(selectedPost._id, { text })
-			if (res.success) {
-				const updatedCommentData = [...comment, res.comment];
-				setComment(updatedCommentData);
-				const updatedPostData = posts?.map(p =>
-					p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
-				);
-				dispatch(setPosts(updatedPostData));
-				toast.success(res.message);
-				setText("");
-			}
+		  if (!text.trim()) {
+			toast.error("Bạn chưa nhập nội dung!");
+			setIsSubmitting(false);
+			return;
+		  }
+	  
+		  console.log(" Dữ liệu gửi đi:", { text });
+	  
+		  const spamCheck = await axios.post("http://localhost:8000/api/v1/ai/predict-spam", { text });
+	  
+		  console.log(" Kết quả kiểm tra spam:", spamCheck.data);
+	  
+		  if (spamCheck.data.prediction === "Spam") {  
+			toast.error("🚫 Bình luận chứa nội dung spam! Vui lòng nhập nội dung khác.");
+			setIsSubmitting(false);
+			return;
+		  }
+	  
+		  //ko spam =>gửi comment 
+		  const res = await addComment(selectedPost._id, { text });
+	  
+		  if (res.success) {
+			const updatedCommentData = [...comment, res.comment];
+			setComment(updatedCommentData);
+			const updatedPostData = posts?.map(p =>
+			  p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
+			);
+			dispatch(setPosts(updatedPostData));
+			toast.success(res.message);
+			setText("");
+		  }
 		} catch (error) {
-			console.log(error);
+		  console.error("Lỗi khi gửi comment:", error.response?.data || error.message);
+		  toast.error("Có lỗi xảy ra khi gửi comment.");
 		} finally {
-			setIsSubmitting(false); // Mở khóa sau khi hoàn tất
+		  setIsSubmitting(false); 
 		}
-	}
+	  };
+	  
 
 	const likeOrDislikeHandler = async () => {
 		try {

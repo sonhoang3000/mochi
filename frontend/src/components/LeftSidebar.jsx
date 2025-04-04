@@ -98,7 +98,7 @@ const LeftSidebar = () => {
 
 	const moreItems = [
 		{ icon: <FaRobot className="text-lg text-pink-500" />, text: "AI Assistant" },
-		{ icon: <ShieldAlert className="text-blue-500" />, text: "News Checker" }, // Cập nhật text khớp với sidebarHandler
+		{ icon: <ShieldAlert className="text-blue-500" />, text: "FakeNewsChecker" },
 		{ icon: <LogOut className="text-red-500" />, text: "Logout" },
 	];
 	

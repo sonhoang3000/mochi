@@ -55,7 +55,7 @@ const FakeNewsChecker = () => {
 
       {result && (
         <p className={`mt-4 font-bold p-3 rounded-lg ${result.prediction === "Fake News" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
-          Kết quả: {result.prediction} (Độ tin cậy: {result.confidence ? result.confidence.toFixed(2) : "N/A"})
+          Kết quả: {result.prediction} (Credibility: {result.confidence ? result.confidence.toFixed(2) : "N/A"})
         </p>
       )}
     </div>
