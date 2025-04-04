@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { setAuthUser } from '@/redux/authSlice'
 import { setPosts } from "@/redux/postSlice"
 import { addComment, bookmarkPost, likeOrDislike } from "@/services/postService"
@@ -13,6 +14,23 @@ import Comment from "./Comment"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
+=======
+import { Link } from "react-router-dom"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
+import { MoreHorizontal, Bookmark, MessageCircle, BookMarked, Send } from "lucide-react"
+import { Button } from "./ui/button"
+import { useEffect, useState } from "react"
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from "react-redux"
+import Comment from "./Comment"
+import { addComment, likeOrDislike, bookmarkPost } from "@/services/postService"
+import { setPosts } from "@/redux/postSlice"
+import { toast } from "sonner"
+import { FaHeart, FaRegHeart } from "react-icons/fa"
+import { setAuthUser } from '@/redux/authSlice'
+
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 const CommentDialog = ({ open, setOpen }) => {
 	const [text, setText] = useState("")
 	const { selectedPost, posts } = useSelector(store => store.post);
@@ -25,6 +43,7 @@ const CommentDialog = ({ open, setOpen }) => {
 	const [isBookmarked, setIsBookmarked] = useState(user?.bookmarks?.includes(selectedPost?._id) || false);
 
 	useEffect(() => {
+<<<<<<< HEAD
 		console.log('User bookmarks:', user?.bookmarks);
 		console.log('Selected post ID:', selectedPost?._id);
 		console.log('Is bookmarked:', user?.bookmarks?.includes(selectedPost?._id));
@@ -36,6 +55,16 @@ const CommentDialog = ({ open, setOpen }) => {
             setComment(selectedPost.comments || []);
         }
     }, [selectedPost, user?._id]);
+=======
+		if (selectedPost && user) {
+			setIsBookmarked(user.bookmarks?.includes(selectedPost._id) || false);
+			setLiked(selectedPost.likes?.includes(user?._id) || false);
+			setPostLike(selectedPost.likes?.length || 0);
+			setComment(selectedPost.comments || []);
+		}
+	}, [selectedPost, user]);
+
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
@@ -43,7 +72,13 @@ const CommentDialog = ({ open, setOpen }) => {
 				setOpen(false);
 			}
 		};
+<<<<<<< HEAD
 		document.addEventListener("keydown", handleKeyDown);
+=======
+
+		document.addEventListener("keydown", handleKeyDown);
+
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
@@ -57,6 +92,7 @@ const CommentDialog = ({ open, setOpen }) => {
 			setText("")
 		}
 	}
+<<<<<<< HEAD
 	const sendMessageHandler = async () => {
 		if (isSubmitting) return; 
 		setIsSubmitting(true);
@@ -101,6 +137,30 @@ const CommentDialog = ({ open, setOpen }) => {
 		}
 	  };
 	  
+=======
+
+	const sendMessageHandler = async () => {
+		if (isSubmitting) return; // Tránh gọi hàm nếu đã có yêu cầu đang xử lý
+		setIsSubmitting(true);
+		try {
+			const res = await addComment(selectedPost._id, { text })
+			if (res.success) {
+				const updatedCommentData = [...comment, res.comment];
+				setComment(updatedCommentData);
+				const updatedPostData = posts?.map(p =>
+					p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
+				);
+				dispatch(setPosts(updatedPostData));
+				toast.success(res.message);
+				setText("");
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsSubmitting(false); // Mở khóa sau khi hoàn tất
+		}
+	}
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
 	const likeOrDislikeHandler = async () => {
 		try {
@@ -134,6 +194,7 @@ const CommentDialog = ({ open, setOpen }) => {
 			const res = await bookmarkPost(selectedPost?._id)
 			if (res.success) {
 				setIsBookmarked(!isBookmarked);
+<<<<<<< HEAD
                 const updatedUser = {
                     ...user,
                     bookmarks: isBookmarked 
@@ -142,6 +203,16 @@ const CommentDialog = ({ open, setOpen }) => {
                 };
                 dispatch(setAuthUser(updatedUser));
                 toast.success(res.message)
+=======
+				const updatedUser = {
+					...user,
+					bookmarks: isBookmarked
+						? user.bookmarks.filter(id => id !== selectedPost._id)
+						: [...(user.bookmarks || []), selectedPost._id]
+				};
+				dispatch(setAuthUser(updatedUser));
+				toast.success(res.message)
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 			}
 		} catch (error) {
 			toast.error(error.response?.data?.message || "Có lỗi xảy ra khi bookmark bài viết")
@@ -183,8 +254,13 @@ const CommentDialog = ({ open, setOpen }) => {
 								</Link>
 								<div>
 									<Link to={`/profile/${selectedPost?.author?._id}`} className="font-semibold text-xs" >{selectedPost?.author?.username}</Link>
+<<<<<<< HEAD
 								</div>
 							</div>
+=======
+								</div >
+							</div >
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
 							<Dialog>
 								<DialogTrigger asChild>
@@ -199,7 +275,11 @@ const CommentDialog = ({ open, setOpen }) => {
 									</div>
 								</DialogContent>
 							</Dialog>
+<<<<<<< HEAD
 						</div>
+=======
+						</div >
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 						<hr />
 						<div className="flex-1 overflow-y-auto max-h-96 p-4">
 							{
@@ -216,7 +296,11 @@ const CommentDialog = ({ open, setOpen }) => {
 									<MessageCircle className="cursor-pointer hover:text-gray-600" />
 									<Send className="cursor-pointer hover:text-gray-600" />
 								</div>
+<<<<<<< HEAD
 								{isBookmarked ? 
+=======
+								{isBookmarked ?
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 									<BookMarked onClick={bookmarkHandler} className="cursor-pointer text-black" /> :
 									<Bookmark onClick={bookmarkHandler} className="cursor-pointer hover:text-gray-600" />
 								}
@@ -235,10 +319,17 @@ const CommentDialog = ({ open, setOpen }) => {
 								<Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
 							</div>
 						</div>
+<<<<<<< HEAD
 					</div>
 				</div>
 			</DialogContent>
 		</Dialog>
+=======
+					</div >
+				</div >
+			</DialogContent >
+		</Dialog >
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 	)
 }
 

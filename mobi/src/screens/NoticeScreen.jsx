@@ -16,7 +16,10 @@ const NoticeScreen = () => {
             try {
                 const response = await getAllNotificationsService();
                 setNotifications(response.data.notifications);    
+<<<<<<< HEAD
                 console.log('check',response.data.notifications)
+=======
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
             } catch (error) {
                 console.error('Lỗi khi lấy thông báo:', error);
             } finally {
@@ -35,8 +38,11 @@ const NoticeScreen = () => {
             year: 'numeric'
         });
 
+<<<<<<< HEAD
         console.log('check',item)
 
+=======
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         return (
             <TouchableOpacity 
                 style={styles.notificationItem} 
@@ -56,7 +62,10 @@ const NoticeScreen = () => {
     };
 
     const handleNotificationPress = (item) => {
+<<<<<<< HEAD
         console.log('Notification pressed:', item);
+=======
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         navigation.navigate('PostDetail', { 
             post: item.postId  // Truyền thông tin bài post vào màn hình PostDetail
         });

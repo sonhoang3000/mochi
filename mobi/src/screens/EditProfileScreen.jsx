@@ -59,7 +59,10 @@ const EditProfileScreen = () => {
     try {
       setLoading(true);
       const res = await editProfile(formData);
+<<<<<<< HEAD
       console.log('check')
+=======
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
       if (res.success) {
         updateUser(res.user);

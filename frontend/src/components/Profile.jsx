@@ -23,8 +23,12 @@ const Profile = () => {
 
   const { userProfile, user, getConversation } = useSelector(store => store.auth)
 
+<<<<<<< HEAD
   const isLoggedInUserProfile =
     user && userProfile && user._id === userProfile._id
+=======
+  const isLoggedInUserProfile = user && userProfile && user._id === userProfile._id
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
   const handleTabChange = (tab) => {
     setActiveTab(tab)
@@ -100,8 +104,12 @@ const Profile = () => {
     }
   }
 
+<<<<<<< HEAD
   const displayedPost =
     activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
+=======
+  const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
   // ✅ Loading state khi userProfile chưa có
   if (!userProfile) {

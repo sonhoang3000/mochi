@@ -37,7 +37,10 @@ const EditProfile = () => {
 	}
 
 	const editProfileHandler = async () => {
+<<<<<<< HEAD
 		console.log('check input', input);
+=======
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 		const formData = new FormData()
 		formData.append("bio", input.bio)
 		formData.append("gender", input.gender)

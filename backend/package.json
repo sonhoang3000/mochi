@@ -13,7 +13,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+<<<<<<< HEAD
     "axios": "^1.8.4",
+=======
+    "axios": "^1.8.2",
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
     "bcryptjs": "^2.4.3",
     "buffer": "^6.0.3",
     "cloudinary": "^2.5.1",

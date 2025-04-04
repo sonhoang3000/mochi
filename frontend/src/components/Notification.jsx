@@ -5,11 +5,16 @@ import { useState, useEffect } from "react";
 import CommentDialog from "./CommentDialog";
 import { setSelectedPost } from "@/redux/postSlice"
 import { markAsRead } from "@/services/notificationService"
+<<<<<<< HEAD
 import { setActionNotification } from "@/redux/rtnSlice"
+=======
+import useGetAllNotifications from "@/hooks/useGetAllNotifications"
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
 const Notification = ({ open, setOpen }) => {
     const { actionNotification } = useSelector(store => store.realTimeNotification)
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+<<<<<<< HEAD
     const dispatch = useDispatch();
     
     useEffect(() => {
@@ -34,11 +39,50 @@ const Notification = ({ open, setOpen }) => {
                 } catch (error) {
                     console.error("Error marking notifications as read:", error);
                 }
+=======
+    const { refreshNotifications } = useGetAllNotifications();
+    const dispatch = useDispatch();
+    
+    const sortedNotifications = Array.isArray(actionNotification) 
+        ? [...actionNotification].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        : [];
+
+    useEffect(() => {
+        if (open) {
+            refreshNotifications();
+        }
+    }, [open]);
+
+    useEffect(() => {
+        const markAllAsRead = async () => {
+            if (!open || !actionNotification?.length) return;
+
+            const unreadNotifications = actionNotification.filter(
+                notification => !notification.isRead
+            );
+
+            if (unreadNotifications.length === 0) return;
+
+            try {
+                await Promise.all(
+                    unreadNotifications.map(notification => 
+                        markAsRead(notification._id)
+                    )
+                );
+                
+                refreshNotifications();
+            } catch (error) {
+                console.error("Error marking notifications as read:", error);
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
             }
         };
 
         markAllAsRead();
+<<<<<<< HEAD
     }, [open]);
+=======
+    }, [open, actionNotification]);
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 
     const handlePostClick = (post) => {
         const postWithComments = {
@@ -57,7 +101,11 @@ const Notification = ({ open, setOpen }) => {
                         <DialogTitle>Notification</DialogTitle>
                     </DialogHeader>
                     <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+<<<<<<< HEAD
                         {Array.isArray(actionNotification) && actionNotification.map(notification => (
+=======
+                        {sortedNotifications.map(notification => (
+>>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
                             <div key={notification._id} className="flex items-center gap-3 p-3 border-b hover:bg-gray-50">
                                 {/* Avatar của người gửi */}
                                 <div className="w-10 h-10 rounded-full overflow-hidden">
