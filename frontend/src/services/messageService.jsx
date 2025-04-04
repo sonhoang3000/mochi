@@ -8,6 +8,4 @@ const getMessage = (id) => {
       return axios.get(`/api/v1/message/all/${id}`, { withCredentials: true })
 }
 
-export {
-      sendMessage, getMessage
-}
+export { getMessage, sendMessage }

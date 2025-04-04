@@ -57,10 +57,7 @@ const getConversationService = () => {
 }
 
 const createConversationService = (targetId) => {
-<<<<<<< HEAD
 	console.log('check ', targetId)
-=======
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 	return axios.get(
 		`/api/v1/user/createconversation/${targetId}`,
 		// {}, // Phải có body (nếu không gửi gì, truyền `{}`)
@@ -69,3 +66,4 @@ const createConversationService = (targetId) => {
 }
 
 export { createConversationService, editProfile, followOrUnfollow, getConversationService, getProfile, getSuggestedUsers, loginUser, logoutUser, registerUser, searchUser }
+

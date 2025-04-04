@@ -18,10 +18,9 @@ try:
     model = tf.keras.models.load_model(MODEL_PATH)
     with open(TOKENIZER_PATH, "rb") as f:
         tokenizer = pickle.load(f)
-    print("✅ Mô hình & Tokenizer đã load thành công!")
+    print("Mô hình & Tokenizer đã load thành công!")
 except Exception as e:
-    print(f"❌ Lỗi khi load mô hình: {e}")
-
+    print(f" Lỗi khi load mô hình: {e}")
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
@@ -39,13 +38,25 @@ def predict():
         
         # Dự đoán
         prediction = model.predict(padded)[0][0]
-        label = "Real News" if prediction > 0.6 else "Fake News"
-        
-        print(f"📊 Kết quả: {label} | Xác suất: {prediction:.4f}")  # Log kết quả
-        
-        return jsonify({"prediction": label, "confidence": float(prediction)})
+
+        if prediction > 0.6:
+            label = "Tin thật (Vô tư đi! Tin này sự thật <3)"
+            color = "green"
+        else:
+            label = "Tin giả (Bạn phải cân nhắc và chọn lựa thông tin chính xác hơn)"
+            color = "red"
+
+        print(f" Kết quả: {label} | Xác suất: {prediction:.4f}")  # Log kết quả
+
+        return jsonify({
+            "prediction": label,
+            "confidence": float(prediction),
+            "color": color
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)  
+    app.run(host="0.0.0.0", port=5001, debug=True)    

@@ -3,11 +3,9 @@ import { useState } from "react";
 const FakeNewsChecker = () => {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleCheck = async () => {
-    setLoading(true);
     setError(null);
     setResult(null);
 
@@ -28,14 +26,15 @@ const FakeNewsChecker = () => {
       setResult(data);
     } catch (error) {
       setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6 text-center">News Checker</h1>
+    <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col items-center bg-gray-50">
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+         Kiểm Tra Tin Giả
+      </h1>
+
       <textarea
         className="w-full border p-3 rounded-md shadow-sm focus:ring focus:ring-blue-200"
         rows="5"
@@ -43,24 +42,36 @@ const FakeNewsChecker = () => {
         onChange={(e) => setText(e.target.value)}
         placeholder="Nhập nội dung cần kiểm tra..."
       />
+
       <button
         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition"
         onClick={handleCheck}
-        disabled={loading}
+        disabled={!text} // Vô hiệu hóa nút nếu không có văn bản
       >
-        {loading ? "Đang kiểm tra..." : "Kiểm tra Fake News"}
+        Kiểm tra Fake News
       </button>
 
-      {error && <p className="mt-4 text-red-500">Lỗi: {error}</p>}
+      {error && (
+        <p className="mt-4 text-red-500 font-semibold">Lỗi: {error}</p>
+      )}
 
       {result && (
-        <p className={`mt-4 font-bold p-3 rounded-lg ${result.prediction === "Fake News" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
-          Kết quả: {result.prediction} (Credibility: {result.confidence ? result.confidence.toFixed(2) : "N/A"})
+        <p
+          className={`mt-6 font-semibold text-lg border-l-4 p-4 rounded shadow-md
+            ${
+              result.color === "red"
+                ? "border-red-500 bg-red-100 text-red-700"
+                : "border-green-500 bg-green-100 text-green-700"
+            }
+          `}
+        >
+          <strong>Kết quả:</strong> {result.prediction}
+          <br />
+          <strong>Xác suất:</strong> {(result.confidence * 100).toFixed(2)}%
         </p>
       )}
     </div>
   );
 };
-
 
 export default FakeNewsChecker;

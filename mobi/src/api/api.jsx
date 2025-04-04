@@ -141,16 +141,10 @@ export const getAllMessages = async (userId) => {
   }
 };
 
-<<<<<<< HEAD
 export const sendMessage = async (receiverId, data) => {
   try {
     const res = await api.post(`/message/send/${receiverId}`, data);
     return res.data;
-=======
-export const sendMessage = async (receiverId, textMessage) => {
-  try {
-    return await api.post(`/message/send/${receiverId}`, textMessage);
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
   } catch (error) {
     console.error(" Lỗi khi gửi tin nhắn:", error.response?.data || error.message);
     return { success: false };
