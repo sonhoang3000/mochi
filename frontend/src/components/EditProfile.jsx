@@ -1,14 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { useDispatch, useSelector } from 'react-redux'
-import { Button } from './ui/button'
-import { useRef, useState } from 'react'
-import { Textarea } from './ui/textarea'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Loader2 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { editProfile } from '@/services/userService'
-import { toast } from 'sonner'
 import { setAuthUser } from '@/redux/authSlice'
+import { editProfile } from '@/services/userService'
+import { Loader2 } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Button } from './ui/button'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { Textarea } from './ui/textarea'
 // import 
 
 const EditProfile = () => {
@@ -37,10 +37,7 @@ const EditProfile = () => {
 	}
 
 	const editProfileHandler = async () => {
-<<<<<<< HEAD
 		console.log('check input', input);
-=======
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
 		const formData = new FormData()
 		formData.append("bio", input.bio)
 		formData.append("gender", input.gender)

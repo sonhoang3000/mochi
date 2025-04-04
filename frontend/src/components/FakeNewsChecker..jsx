@@ -12,11 +12,7 @@ const FakeNewsChecker = () => {
     setResult(null);
 
     try {
-<<<<<<< HEAD
       const response = await fetch("http://localhost:8000/api/v1/ai/fakenew", {
-=======
-      const response = await fetch("http://localhost:8000/api/v1/ai/check-fake-news", {
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,11 +55,7 @@ const FakeNewsChecker = () => {
 
       {result && (
         <p className={`mt-4 font-bold p-3 rounded-lg ${result.prediction === "Fake News" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
-<<<<<<< HEAD
           Kết quả: {result.prediction} (Credibility: {result.confidence ? result.confidence.toFixed(2) : "N/A"})
-=======
-          Kết quả: {result.prediction} (Độ tin cậy: {result.confidence ? result.confidence.toFixed(2) : "N/A"})
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         </p>
       )}
     </div>

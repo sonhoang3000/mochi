@@ -48,8 +48,4 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     app.run(host="0.0.0.0", port=5001, debug=True)  
-=======
-    app.run(host="0.0.0.0", port=5000, debug=True)  
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea

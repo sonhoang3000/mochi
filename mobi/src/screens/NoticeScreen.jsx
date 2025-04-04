@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useEffect, useState } from 'react';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getAllNotificationsService } from '../api/notificationService';
 import { AuthContext } from '../context/AuthContext';
 
@@ -16,10 +16,7 @@ const NoticeScreen = () => {
             try {
                 const response = await getAllNotificationsService();
                 setNotifications(response.data.notifications);    
-<<<<<<< HEAD
                 console.log('check',response.data.notifications)
-=======
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
             } catch (error) {
                 console.error('Lỗi khi lấy thông báo:', error);
             } finally {
@@ -38,11 +35,8 @@ const NoticeScreen = () => {
             year: 'numeric'
         });
 
-<<<<<<< HEAD
         console.log('check',item)
 
-=======
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         return (
             <TouchableOpacity 
                 style={styles.notificationItem} 
@@ -62,10 +56,7 @@ const NoticeScreen = () => {
     };
 
     const handleNotificationPress = (item) => {
-<<<<<<< HEAD
         console.log('Notification pressed:', item);
-=======
->>>>>>> 0082e97b985bedc0ff2c23e46d2be1efcc35b6ea
         navigation.navigate('PostDetail', { 
             post: item.postId  // Truyền thông tin bài post vào màn hình PostDetail
         });
