@@ -42,7 +42,7 @@ df['label'] = df['label'].map({'sai': 0, 'đúng': 1})
 X_train, X_test, y_train, y_test = train_test_split(
     sequences, 
     df['label'], 
-    test_size=0.2,       # 20% dữ liệu để test
+    test_size=0.2,       # 20% dữ liệu test
     random_state=42,     # Giữ kết quả chia ổn định giữa các lần chạy
     stratify=df['label']
 )
@@ -53,7 +53,6 @@ y_train = np.array(y_train)
 X_test = np.array(X_test)
 y_test = np.array(y_test)
 
-# Lưu tokenizer
 with open(TOKENIZER_PATH, "wb") as f: pickle.dump(tokenizer, f)
 
 # Kiểm tra xem nhãn có cần phải chuyển đổi không
